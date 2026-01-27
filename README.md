@@ -2,7 +2,7 @@
 
 
 ## Team Members
-- Member 1
+- Caleb Clauson
 - Member 2
 
 ## Project Idea
