@@ -3,7 +3,7 @@
 
 ## Team Members
 - Caleb Clauson
-- Member 2
+- Eric Anderson
 
 ## Project Idea
 Place your description and details here.
