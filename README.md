@@ -14,4 +14,4 @@ Place your description and details here.
 
 ## Project Timeline
 - Proposal due February 5, 2026
-- Final Project due week 27
+- Final Project due week 17
