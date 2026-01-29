@@ -7,10 +7,10 @@
 
 ## Project Idea
 Place your description and details here.
-1.) Linux or Windows focused
-2.) User Focused
-3.) Shell Scripting maybe
-4.) Raw or Structered output
+1. Linux or Windows focused
+2. User Focused
+3. Shell Scripting or Python
+4. Raw or Structured output
 
 ## Project Timeline
 - Proposal due January 5, 2026
