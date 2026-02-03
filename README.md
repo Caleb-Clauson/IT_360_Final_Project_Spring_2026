@@ -9,7 +9,7 @@
  - Securists
 
 ## Project Idea
-Place your description and details here.
+Our project will cover the following:
 1. Linux or Windows focused
 2. User Focused
 3. Shell Scripting or Python
