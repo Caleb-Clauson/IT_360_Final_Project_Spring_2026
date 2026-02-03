@@ -13,5 +13,6 @@ Place your description and details here.
 4. Raw or Structured output
 
 ## Project Timeline
-- Proposal due February 5, 2026
-- Final Project due week 17
+The project timeline is as follows:
+- Complete proposal by February 5, 2026
+- Complete final project by May 30, 2026 (Week 17)
