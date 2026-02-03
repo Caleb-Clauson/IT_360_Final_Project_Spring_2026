@@ -5,6 +5,9 @@
 - Caleb Clauson
 - Eric Anderson
 
+## Team Name
+ - Securists
+
 ## Project Idea
 Place your description and details here.
 1. Linux or Windows focused
