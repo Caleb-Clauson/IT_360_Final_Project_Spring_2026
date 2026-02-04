@@ -9,8 +9,8 @@
  - Securists
 
 ## Project Idea
-Our project will cover the following:
-1. Linux or Windows focused
+Our project will be:
+1. Linux focused
 2. User Focused
 3. Shell Scripting or Python
 4. Raw or Structured output
