@@ -39,5 +39,8 @@ Our project will be: ForensiCollect - Linux DFIR Triage & Mini Timeline Report T
    
 ## Project Timeline
 The project timeline is as follows:
-- Complete proposal by February 5, 2026
-- Complete final project by May 30, 2026 (Week 17)
+- February 5, 2026: Project Proposal Submission.
+- Week of March 16: Completion of First Script (Core collection features working).
+- Week of April 13: Testing & Validation (Verify hashing and evidence integrity).
+- Week of May 11: Documentation Phase (Drafting the report and presentation).
+- May 30, 2026: Final Project Submission.
