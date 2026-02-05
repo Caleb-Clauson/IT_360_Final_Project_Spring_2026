@@ -22,11 +22,11 @@ Our project will be: ForensiCollect - Linux DFIR Triage & Mini Timeline Report T
    - process/service snapshot
    - network snapshot
    - recent file changes in key directories
-2.) Integrity and documentation
-   -SHA-256 hash manifest
-   -Collection log
-3.) Output packaging
-   -compressed case archive for storage transfer
+2. Integrity and documentation
+   - SHA-256 hash manifest
+   - Collection log
+3. Output packaging
+   - compressed case archive for storage transfer
 
 ## Tech Stack
 1. Bash for collection/orchestration
