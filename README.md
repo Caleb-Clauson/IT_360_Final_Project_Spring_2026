@@ -1,5 +1,5 @@
 # IT_360_Final_Project_Spring_2026
-
+Our final project for IT 360 will be to create a forensic collecter, specifically a Linux DIFR Triage and timeline reporting tool.
 
 ## Team Members
 - Caleb Clauson
@@ -16,17 +16,17 @@ Our project will be: ForensiCollect - Linux DFIR Triage & Mini Timeline Report T
 4. Structured output
 
 ## What the Tool will do
-1. evidence collection
-   - system info
-   - user activity
-   - process/service snapshot
-   - network snapshot
-   - recent file changes in key directories
+1. Evidence collection
+   - System info
+   - User activity
+   - Process/service snapshot
+   - Network snapshot
+   - Recent file changes in key directories
 2. Integrity and documentation
    - SHA-256 hash manifest
    - Collection log
 3. Output packaging
-   - compressed case archive for storage transfer
+   - Compressed case archive for storage transfer
 
 ## Tech Stack
 1. Bash for collection/orchestration
