@@ -17,11 +17,11 @@ Our project will be: ForensiCollect - Linux DFIR Triage & Mini Timeline Report T
 
 ## What the Tool will do
 1. evidence collection
-   -system info
-   -user activity
-   -process/service snapshot
-   -network snapshot
-   -recent file changes in key directories
+   - system info
+   - user activity
+   - process/service snapshot
+   - network snapshot
+   - recent file changes in key directories
 2.) Integrity and documentation
    -SHA-256 hash manifest
    -Collection log
