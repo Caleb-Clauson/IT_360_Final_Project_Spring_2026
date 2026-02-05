@@ -25,7 +25,9 @@ Our project will be: ForensiCollect - Linux DFIR Triage & Mini Timeline Report T
 2. Integrity and documentation
    - SHA-256 hash manifest
    - Collection log (audit trail of actions/commands)
-3. Output packaging
+3. Artifical Intelligence Explainer
+   - A Large Language Model analyzes and converts logs into readable summaries for the report.
+4. Output packaging
    - Compressed case archive for storage/transfer
 
 ## Tech Stack
