@@ -13,7 +13,7 @@
 -Running services: 'systemctl 
 4.) Network snapshot
 -Interfaces + Routes 'ip a', 'ip r'
--Listening ports: 
+-Listening ports
 5.) Recent file changes (key directories)
 -Recent modification in '/etc' and '/var/log' 
 
