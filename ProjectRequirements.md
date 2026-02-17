@@ -17,7 +17,7 @@
 5. Recent file changes (key directories)
 - Recent modification in '/etc' and '/var/log'
 6. Complex imformation 
-- (e.g., Shimcache, Amcache)
+- Information such as Shimcache and Amcache
 
 # How will you maintain data integrity throughout collection?
 We will preserve integrity and create an audit trail by:
