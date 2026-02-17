@@ -15,7 +15,7 @@
 - Interfaces + Routes 'ip a', 'ip r'
 - Listening ports
 5. Recent file changes (key directories)
--Recent modification in '/etc' and '/var/log'
+- Recent modification in '/etc' and '/var/log'
 6. Complex imformation 
 - (e.g., Shimcache, Amcache)
 
