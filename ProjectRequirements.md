@@ -1,22 +1,22 @@
 # What specific forensic artifacts will your tool collect?
-1.) System Information
+1. System Information
 -OS + kernal: '/etc/os-release', 'uname -a'
 -Host + time: 'hostnamectl' (if available), 'date', 'uptime'
 -Storage overview: 'df -h', 'lsblk'
-2.) User Activity
+2. User Activity
 -Current sessions: 'who'
 -Recent logons 'last -a' (last 50 entries)
 -Authentication + sudo activity:
   -'/var/log/auth.log' (Ubuntu)
-3.) Process/Service snapshot
+3. Process/Service snapshot
 -Running processes: 'ps aux' (top CPU/mem snapshots)
 -Running services: 'systemctl 
-4.) Network snapshot
+4. Network snapshot
 -Interfaces + Routes 'ip a', 'ip r'
 -Listening ports
-5.) Recent file changes (key directories)
+5. Recent file changes (key directories)
 -Recent modification in '/etc' and '/var/log'
-6.) Complex imformation 
+6. Complex imformation 
 -(e.g., Shimcache, Amcache)
 
 # How will you maintain data integrity throughout collection?
