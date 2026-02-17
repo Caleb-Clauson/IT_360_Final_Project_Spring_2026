@@ -22,7 +22,7 @@ Our project will be: ForensiCollect - Linux DFIR Triage & Mini Timeline Report T
    - Process/service snapshot
    - Network snapshot
    - Recent file changes in key directories
-   - complex imformation (e.g., Shimcache, Amcache)
+   - Complex imformation (e.g., Shimcache, Amcache)
 2. Integrity and documentation
    - SHA-256 hash manifest
    - Collection log (audit trail of actions/commands)
