@@ -35,6 +35,11 @@ Our project will be: ForensiCollect - Linux DFIR Triage & Mini Timeline Report T
 1. Bash for collection/orchestration
 2. Uses standard Linux utilities
 
+## AI Componet
+ForensiCollect uses a Large Language Model (LLM) strictly for post collection analysis and explantion. After forensic artifacts are gathered and hashed by Bash scripts, the AI componet converts complex logs and system data into human readable summaries for the report. 
+
+The AI does not collect, modify, or validate evidence. All eviedence acquistion and integrity checks are performed using standard Linux utilities. The AI serves only as an interpretive aid to improve readability and investigator effieciency.
+
 ## How we will demo it
 1. Run tool on a Linux VM
 2. Walk through the case folder outputs (raw artifacts, hash manifest, report)
