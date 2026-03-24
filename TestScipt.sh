@@ -1,13 +1,23 @@
-# PowerShell Script
-# Get current date and time
-$currentDate = Get-Date
-Write-Host "Current Date and Time: $currentDate"
+#!/bin/bash
 
-# List files in current directory
-$files = Get-ChildItem
-Write-Host "Files in current directory:"
-$files | ForEach-Object { Write-Host $_.Name }
+# Basic Bash shell script template
 
-# Create a simple variable and display it
-$message = "Hello from PowerShell!"
-Write-Host $message
+echo "Hello, World!"
+
+# Variables
+name="User"
+echo "Welcome, $name!"
+
+# Simple conditional
+if [ -n "$name" ]; then
+    echo "Name is set to: $name"
+else
+    echo "Name is not set"
+fi
+
+# Simple loop
+for i in {1..3}; do
+    echo "Iteration $i"
+done
+
+echo "Script completed!"
