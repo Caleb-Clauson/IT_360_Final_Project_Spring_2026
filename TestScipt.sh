@@ -1,4 +1,4 @@
-PowerShell Script
+# PowerShell Script
 # Get current date and time
 $currentDate = Get-Date
 Write-Host "Current Date and Time: $currentDate"
