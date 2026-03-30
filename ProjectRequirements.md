@@ -1,62 +1,147 @@
-# What specific forensic artifacts will your tool collect?
-1. System Information
-- OS + kernal: '/etc/os-release', 'uname -a'
-- Host + time: 'hostnamectl' (if available), 'date', 'uptime'
-- Storage overview: 'df -h', 'lsblk'
-2. User Activity
-- Current sessions: 'who'
-- Recent logons 'last -a' (last 50 entries)
-- Authentication + sudo activity:
-  -'/var/log/auth.log' (Ubuntu)
-3. Process/Service snapshot
-- Running processes: 'ps aux' (top CPU/mem snapshots)
-- Running services: 'systemctl 
-4. Network snapshot
-- Interfaces + Routes 'ip a', 'ip r'
-- Listening ports
-5. Recent file changes (key directories)
-- Recent modification in '/etc' and '/var/log'
-6. Complex imformation 
-- Information such as Shimcache and Amcache
+# Project Requirements – ForensiCollect
 
-# How will you maintain data integrity throughout collection?
-We will preserve integrity and create an audit trail by:
--Using read-only commands wherever possible (triage collection, no disk imaging)
--Writing outputs to a timestamped case directory to avoid overwiriting prior runs
--Logging every command executed with a timestamp into 'collection_log.txt'
--Hashing every collected output file using SHA-256 and writing a 'hash_manifest.txt'
--Creating a SHA-256 hash of the final compressed archive ('case.tar.gz') for later verification
--Using consistent file naming and timestamps so results are repeatable
+## 1. Forensic Artifacts Collected
 
-# What dependencies will your tool require on the target system?
-Minimum dependcies
--'bash', 'coreutils'
--'ps', 'find'
--Networking tools: 'ip', 'ss', or 'netstat'
--'sha256sum'
--Archiving: 'tar', 'gzip'
+### System Information
+- OS and kernel:
+  - `/etc/os-release`
+  - `uname -a`
+- Host and time:
+  - `hostnamectl` (if available) or `hostname`
+  - `date`
+  - `uptime`
+- Storage overview:
+  - `df -h`
+  - `lsblk`
 
-# How will you handle errors and unexpected conditions?
-We will imprement robust error handling by:
--Checking required commands at startup and reporting missing tools (while continuing with what is available)
--Wrapping each collection step so failures (eg., permission denied, missing logs, unsupported systemd) are:
-  -recorded in 'collection_log.txt'
-  -recorded in a "warnings.txt' section of the summary
-  -do not stop the entire collection unless the output directory cannt be created/written
--Detecting common enironment differences
--Validating free disk space before running and warning if space is low
+---
 
-# What format will your output take for analysis and reporting?
-The tool will produce both raw and structered outputs:
-1.) Raw outputs (human-readable)
--Text files from each module (system, users, processes, network, recent changes)
-2.) Structured outputs
--'report.json'
--'timeline.csv'
-3.) Integrity + documentation
--'hash_manifest.txt'
--'collection_log.txt'
--'summary.txt'
-4.) Packaging
--'case.tar.gz'
+### User Activity
+- Current sessions:
+  - `who`
+- Recent logins:
+  - `last -a` (last 50 entries)
+- Authentication and sudo activity:
+  - `/var/log/auth.log` (Ubuntu)
+  - `/var/log/secure` (RHEL-based systems)
+  - `journalctl` (fallback if needed)
+- User accounts:
+  - `/etc/passwd`
+
+---
+
+### Process / Service Snapshot
+- Running processes:
+  - `ps aux`
+- System resource snapshot:
+  - `top -b -n 1`
+- Running services:
+  - `systemctl list-units --type=service`
+  - fallback: `service --status-all`
+
+---
+
+### Network Snapshot
+- Interfaces and routes:
+  - `ip a`
+  - `ip r`
+- Listening ports:
+  - `ss -tulpen` (preferred)
+  - fallback: `netstat -plant`
+- ARP / neighbor table:
+  - `arp -a`
+  - fallback: `ip neigh`
+
+---
+
+### Recent File Changes
+- Modified files in key directories:
+  - `/etc`
+  - `/var/log`
+- Using:
+  - `find` with `-mtime`
+
+---
+
+### Higher-Value Linux Artifacts
+- Authentication logs
+- Service activity
+- Recent system configuration changes
+- Indicators of persistence or abnormal behavior
+
+---
+
+## 2. Data Integrity
+
+We ensure forensic integrity by:
+- Using read-only commands for triage collection  
+- Writing output to a timestamped case directory  
+- Logging all executed commands (`collection_log.txt`)  
+- Recording warnings (`warnings.txt`)  
+- Hashing all collected files using SHA-256  
+- Creating a hash of the final archive (`case.tar.gz`)  
+- Using consistent naming and timestamps  
+
+---
+
+## 3. Dependencies
+
+### Required
+- `bash`
+- `coreutils`
+- `find`
+- `sha256sum`
+- `tar`
+- `gzip`
+
+### Optional (with fallbacks)
+- `ip`
+- `ss` or `netstat`
+- `ps`
+- `systemctl`
+- `last`
+- `who`
+- `lsblk`
+- `df`
+
+---
+
+## 4. Error Handling
+
+The tool is designed to be resilient:
+
+- Checks for required commands at startup  
+- Logs missing tools but continues execution  
+- Wraps each module to prevent full failure  
+- Records issues in:
+  - `collection_log.txt`
+  - `warnings.txt`
+- Handles:
+  - permission issues  
+  - missing logs  
+  - unsupported system features  
+- Validates disk space before execution  
+
+---
+
+## 5. Output Format
+
+### Raw Outputs
+- Text files from each module stored in `raw/`
+
+### Structured Outputs
+- `report.json`
+- `timeline.csv`
+
+### Documentation and Integrity
+- `collection_log.txt`
+- `warnings.txt`
+- `summary.txt`
+- `hash_manifest.txt`
+
+### Packaging
+- Compressed archive:
+  - `case_TIMESTAMP.tar.gz`
+- Archive hash:
+  - `.sha256`
 
