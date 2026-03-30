@@ -3,9 +3,7 @@
 # Exit on undefined variables
 set -u
 
-# ==============================
 # TOOL CONFIGURATION
-# ==============================
 
 TOOL_NAME="ForensiCollect"
 VERSION="1.0.0"
@@ -13,9 +11,9 @@ VERSION="1.0.0"
 # Number of days to look back for "recent changes"
 RECENT_DAYS="${RECENT_DAYS:-2}"
 
-# ==============================
+# =========================
 # PATH SETUP
-# ==============================
+# =========================
 
 # Get directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -25,9 +23,7 @@ MODULE_DIR="$SCRIPT_DIR/modules"     # Where modules live
 AI_SCRIPT="$SCRIPT_DIR/ai/ai_explainer.sh"  # AI script
 OUT_BASE="$SCRIPT_DIR/output"       # Output folder
 
-# ==============================
-# GLOBAL VARIABLES (initialized later)
-# ==============================
+# GLOBAL VARIABLES (initialized later on)
 
 CASE_DIR=""
 RAW_DIR=""
