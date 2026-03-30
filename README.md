@@ -1,54 +1,104 @@
 # IT_360_Final_Project_Spring_2026
-Our final project for IT 360 will be to create a forensic collector, specifically a Linux DFIR Triage and mini timeline report tool.
+
+## Project Overview
+Our final project for IT 360 is to create a forensic collection tool, specifically a **Linux DFIR Triage and Mini Timeline Report Tool**.
+
+---
 
 ## Team Members
-- Caleb Clauson
-- Eric Anderson
+- Caleb Clauson  
+- Eric Anderson  
 
 ## Team Name
- - Securists
+**Securists**
+
+---
 
 ## Project Idea
-Our project will be: ForensiCollect - Linux DFIR Triage & Mini Timeline Report Tool
-1. Linux focused
-2. User Focused
-3. Shell Scripting (Bash)
-4. Structured output (JSON/CSV)
+**ForensiCollect** – A Linux-based DFIR (Digital Forensics and Incident Response) triage tool designed to collect, organize, and summarize key system artifacts for rapid analysis.
 
-## What the Tool will do
-1. Evidence collection
-   - System info
-   - User activity
-   - Process/service snapshot
-   - Network snapshot
-   - Recent file changes in key directories
-   - Complex imformation (e.g., Shimcache, Amcache)
-2. Integrity and documentation
-   - SHA-256 hash manifest
-   - Collection log (audit trail of actions/commands)
-3. Artifical Intelligence Explainer
-   - A Large Language Model analyzes and converts complex logs into readable summaries for the report.
-4. Output packaging
-   - Compressed case archive for storage/transfer
+### Key Features
+1. Linux-focused forensic triage  
+2. User-focused and easy to interpret  
+3. Implemented using Bash scripting  
+4. Structured outputs (JSON and CSV)  
+5. Modular and extensible design  
+
+---
+
+## What the Tool Does
+
+### 1. Evidence Collection
+The tool collects key forensic artifacts from the system, including:
+- System information (OS, kernel, uptime, storage)
+- User activity (logins, sessions, authentication logs)
+- Process and service snapshots
+- Network configuration and listening ports
+- Recent file changes in critical directories (`/etc`, `/var/log`)
+- Higher-value Linux artifacts such as authentication activity and system changes
+
+---
+
+### 2. Integrity and Documentation
+To ensure forensic soundness, the tool:
+- Uses read-only commands for triage collection  
+- Creates a timestamped case directory  
+- Logs all executed commands in `collection_log.txt`  
+- Records warnings and errors in `warnings.txt`  
+- Generates a SHA-256 hash manifest (`hash_manifest.txt`)  
+- Hashes the final archive for verification  
+
+---
+
+### 3. Artificial Intelligence Explainer
+An optional AI component is used for **post-collection analysis only**:
+- Converts complex logs into readable summaries  
+- Improves investigator efficiency  
+- Does NOT modify or collect evidence  
+
+---
+
+### 4. Output Packaging
+- Generates a structured case folder  
+- Compresses results into a `.tar.gz` archive  
+- Produces a hash of the archive for integrity validation  
+
+---
 
 ## Tech Stack
-1. Bash for collection/orchestration
-2. Uses standard Linux utilities
+- **Bash scripting** for orchestration and automation  
+- **Standard Linux utilities** (`ps`, `ip`, `ss`, `find`, etc.)  
 
-## AI Componet
-ForensiCollect uses a Large Language Model (LLM) strictly for post collection analysis and explantion. After forensic artifacts are gathered and hashed by Bash scripts, the AI componet converts complex logs and system data into human readable summaries for the report. 
+---
 
-The AI does not collect, modify, or validate evidence. All eviedence acquistion and integrity checks are performed using standard Linux utilities. The AI serves only as an interpretive aid to improve readability and investigator effieciency.
+## Output Structure
+Each run generates a case directory containing:
 
-## How we will demo it
-1. Run tool on a Linux VM
-2. Walk through the case folder outputs (raw artifacts, hash manifest, report)
-3. Show a sample of "findings" section (failed login spikes, unusual listening ports, recent changes in /etc or new users) that flags at least a few indicators
-   
+- `raw/` → collected forensic artifacts  
+- `report/` → summaries and AI outputs  
+- `collection_log.txt` → command audit trail  
+- `warnings.txt` → errors and missing data  
+- `hash_manifest.txt` → SHA-256 file hashes  
+- `summary.txt` → human-readable overview  
+- `report.json` → structured summary  
+- `timeline.csv` → event timeline  
+
+---
+
+## How We Will Demonstrate It
+1. Run the tool on a Linux VM  
+2. Walk through the generated case folder  
+3. Highlight key findings such as:
+   - Failed login attempts  
+   - Suspicious listening ports  
+   - Recent changes in `/etc`  
+   - Newly created users  
+
+---
+
 ## Project Timeline
-The project timeline is as follows:
-- February 5, 2026: Project Proposal Submission.
-- Week of March 16: Completion of First Script (Core collection features working).
-- Week of April 13: Testing & Validation (Verify hashing and evidence integrity).
-- Week of May 11: Documentation Phase (Drafting the report and presentation).
-- May 30, 2026: Final Project Submission.
+- **February 5, 2026**: Project Proposal Submission  
+- **Week of March 16**: Core collection features completed  
+- **Week of April 13**: Testing and validation  
+- **Week of May 11**: Documentation and presentation prep  
+- **May 30, 2026**: Final project submission  
