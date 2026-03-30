@@ -1,16 +1,22 @@
 #!/usr/bin/env bash
 
-# Exit on undefined variables
+# Exit on undefined variables (safer scripting)
 set -u
 
+# ==============================
 # TOOL CONFIGURATION
+# ==============================
+
 TOOL_NAME="ForensiCollect"
 VERSION="1.0.0"
 
 # Number of days to look back for "recent changes"
 RECENT_DAYS="${RECENT_DAYS:-2}"
 
+# ==============================
 # PATH SETUP
+# ==============================
+
 # Get directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -19,7 +25,10 @@ MODULE_DIR="$SCRIPT_DIR/modules"     # Where modules live
 AI_SCRIPT="$SCRIPT_DIR/ai/ai_explainer.sh"  # AI script
 OUT_BASE="$SCRIPT_DIR/output"       # Output folder
 
-# GLOBAL VARIABLES (initialized later on)
+# ==============================
+# GLOBAL VARIABLES (initialized later)
+# ==============================
+
 CASE_DIR=""
 RAW_DIR=""
 REPORT_DIR=""
@@ -32,7 +41,10 @@ TIMELINE_CSV=""
 ARCHIVE_FILE=""
 ARCHIVE_HASH_FILE=""
 
+# ==============================
 # HELPER FUNCTIONS
+# ==============================
+
 # Return current timestamp
 ts() {
     date +"%Y-%m-%d %H:%M:%S"
@@ -66,7 +78,10 @@ check_command() {
     command -v "$1" >/dev/null 2>&1
 }
 
+# ==============================
 # INITIALIZATION
+# ==============================
+
 init_case_dir() {
     # Create base output folder
     mkdir -p "$OUT_BASE" || die "Could not create output directory"
@@ -97,7 +112,10 @@ init_case_dir() {
     log "Case directory: $CASE_DIR"
 }
 
+# ==============================
 # ENVIRONMENT CHECKS
+# ==============================
+
 check_dependencies() {
     log "Checking dependencies..."
 
@@ -126,14 +144,19 @@ check_disk_space() {
     (( available_kb < 102400 )) && warn "Low disk space"
 }
 
+# ==============================
 # TIMELINE
+# ==============================
 
 init_timeline() {
     echo "timestamp,event,details" > "$TIMELINE_CSV"
     echo "\"$(ts)\",\"start\",\"collection started\"" >> "$TIMELINE_CSV"
 }
 
+# ==============================
 # MODULE EXECUTION
+# ==============================
+
 run_module() {
     local module="$1"
     local path="$MODULE_DIR/$module"
@@ -157,7 +180,10 @@ run_module() {
     fi
 }
 
+# ==============================
 # AI ANALYSIS
+# ==============================
+
 run_ai_explainer() {
     # Check if AI script exists
     [[ ! -f "$AI_SCRIPT" ]] && warn "AI script missing" && return
@@ -171,7 +197,10 @@ run_ai_explainer() {
     "$AI_SCRIPT" >> "$COLLECTION_LOG" 2>&1
 }
 
+# ==============================
 # OUTPUT GENERATION
+# ==============================
+
 write_summary() {
     log "Writing summary..."
 
@@ -209,7 +238,10 @@ write_report_json() {
 EOF
 }
 
+# ==============================
 # HASHING
+# ==============================
+
 generate_hash_manifest() {
     log "Hashing files..."
 
@@ -217,7 +249,10 @@ generate_hash_manifest() {
     find . -type f ! -name "hash_manifest.txt" | xargs sha256sum > "$HASH_MANIFEST"
 }
 
+# ==============================
 # PACKAGING
+# ==============================
+
 package_case() {
     log "Creating archive..."
 
@@ -232,7 +267,10 @@ package_case() {
     sha256sum "$ARCHIVE_FILE" > "$ARCHIVE_FILE.sha256"
 }
 
+# ==============================
 # MAIN FUNCTION
+# ==============================
+
 main() {
     init_case_dir
     check_dependencies
