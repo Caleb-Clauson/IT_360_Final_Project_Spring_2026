@@ -8,6 +8,7 @@ RECENT_DAYS="${RECENT_DAYS:-2}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MODULE_DIR="$SCRIPT_DIR/modules"
+AI_SCRIPT="$SCRIPT_DIR/ai/ai_explainer.sh"
 OUT_BASE="$SCRIPT_DIR/output"
 
 CASE_DIR=""
@@ -82,7 +83,7 @@ check_dependencies() {
     log "Checking required and optional commands"
 
     local required_commands=("bash" "date" "find" "sha256sum" "tar" "gzip")
-    local optional_commands=("ip" "ss" "netstat" "ps" "systemctl" "last" "who" "lsblk" "df" "hostnamectl" "uname" "uptime")
+    local optional_commands=("ip" "ss" "netstat" "ps" "systemctl" "last" "who" "lsblk" "df" "hostnamectl" "uname" "uptime" "journalctl" "top")
 
     for cmd in "${required_commands[@]}"; do
         if check_command "$cmd"; then
@@ -104,7 +105,7 @@ check_dependencies() {
 check_disk_space() {
     log "Checking available disk space"
 
-    local available_kb
+    local available_kb=""
     available_kb=$(df "$OUT_BASE" 2>/dev/null | awk 'NR==2 {print $4}')
 
     if [[ -n "${available_kb:-}" ]]; then
@@ -156,10 +157,39 @@ run_module() {
     fi
 }
 
+run_ai_explainer() {
+    if [[ ! -f "$AI_SCRIPT" ]]; then
+        warn "AI script not found: $AI_SCRIPT"
+        echo "\"$(ts)\",\"ai_missing\",\"ai_explainer.sh\"" >> "$TIMELINE_CSV"
+        return 1
+    fi
+
+    if [[ ! -x "$AI_SCRIPT" ]]; then
+        warn "AI script is not executable: $AI_SCRIPT"
+        echo "\"$(ts)\",\"ai_not_executable\",\"ai_explainer.sh\"" >> "$TIMELINE_CSV"
+        return 1
+    fi
+
+    log "Running AI explainer"
+    echo "\"$(ts)\",\"ai_start\",\"ai_explainer.sh\"" >> "$TIMELINE_CSV"
+
+    if RAW_DIR="$RAW_DIR" \
+       REPORT_DIR="$REPORT_DIR" \
+       WARNINGS_FILE="$WARNINGS_FILE" \
+       COLLECTION_LOG="$COLLECTION_LOG" \
+       "$AI_SCRIPT" >> "$COLLECTION_LOG" 2>&1; then
+        log "Completed AI explainer"
+        echo "\"$(ts)\",\"ai_complete\",\"ai_explainer.sh\"" >> "$TIMELINE_CSV"
+    else
+        warn "AI explainer failed"
+        echo "\"$(ts)\",\"ai_failed\",\"ai_explainer.sh\"" >> "$TIMELINE_CSV"
+    fi
+}
+
 write_summary() {
     log "Writing summary file"
 
-    local warning_count
+    local warning_count="0"
     warning_count=$(wc -l < "$WARNINGS_FILE" 2>/dev/null || echo "0")
 
     {
@@ -191,6 +221,14 @@ write_summary() {
         echo "- recent_changes.sh"
         echo
 
+        echo "AI Component:"
+        if [[ -f "$REPORT_DIR/ai_summary.txt" ]]; then
+            echo "- ai_summary.txt generated"
+        else
+            echo "- AI summary not generated"
+        fi
+        echo
+
         echo "Warnings:"
         if [[ -s "$WARNINGS_FILE" ]]; then
             cat "$WARNINGS_FILE"
@@ -206,6 +244,7 @@ write_report_json() {
     local hostname_value="N/A"
     local os_value="N/A"
     local warning_count="0"
+    local ai_generated="false"
 
     if [[ -f "$RAW_DIR/hostname.txt" ]]; then
         hostname_value=$(head -n 1 "$RAW_DIR/hostname.txt" | sed 's/"/\\"/g')
@@ -220,6 +259,10 @@ write_report_json() {
         warning_count=$(wc -l < "$WARNINGS_FILE")
     fi
 
+    if [[ -f "$REPORT_DIR/ai_summary.txt" ]]; then
+        ai_generated="true"
+    fi
+
     cat > "$REPORT_JSON" <<EOF
 {
   "tool": "$TOOL_NAME",
@@ -229,7 +272,8 @@ write_report_json() {
   "recent_days_window": "$RECENT_DAYS",
   "hostname": "$hostname_value",
   "operating_system": "$os_value",
-  "warnings_count": "$warning_count"
+  "warnings_count": "$warning_count",
+  "ai_summary_generated": $ai_generated
 }
 EOF
 }
@@ -303,6 +347,8 @@ main() {
     run_module "process_service.sh"
     run_module "network.sh"
     run_module "recent_changes.sh"
+
+    run_ai_explainer
 
     write_summary
     write_report_json
