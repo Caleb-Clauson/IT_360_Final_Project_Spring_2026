@@ -99,6 +99,6 @@ Each run generates a case directory containing:
 ## Project Timeline
 - **February 5, 2026**: Project Proposal Submission  
 - **Week of March 16**: Core collection features completed  
-- **Week of April 13**: Testing and validation  
-- **Week of May 11**: Documentation and presentation prep  
-- **May 30, 2026**: Final project submission  
+- **Week of April 10**: Scripts complete and tested  
+- **Week of April 16**: Documentation and presentation prep  
+- **May 1**: Final project submission  
