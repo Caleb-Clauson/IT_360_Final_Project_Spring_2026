@@ -4,6 +4,21 @@
 set -u
 
 # ==============================
+# CREDENTIALS LOADING
+# ==============================
+
+# Load environment variables from .env file (if it exists)
+ENV_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.env"
+if [[ -f "$ENV_FILE" ]]; then
+    # shellcheck disable=SC1090
+    source "$ENV_FILE"
+fi
+
+# Export API keys for child processes
+export API_KEY="${API_KEY:-}"
+export AI_MODEL="${AI_MODEL:-}"
+
+# ==============================
 # TOOL CONFIGURATION
 # ==============================
 

@@ -4,6 +4,19 @@
 set -u
 
 # ==============================
+# CREDENTIALS VALIDATION
+# ==============================
+
+# Check if API key is set
+if [[ -z "${AI_API_KEY:-}" ]]; then
+    echo "ERROR: AI_API_KEY not set. Please configure .env file with your API key." >&2
+    exit 1
+fi
+
+# Set defaults for optional variables
+AI_MODEL="${AI_MODEL:-}"
+
+# ==============================
 # OUTPUT FILE SETUP
 # ==============================
 
@@ -18,6 +31,41 @@ echo "========================================" >> "$OUTPUT_FILE"
 echo "ForensiCollect Analysis Summary" >> "$OUTPUT_FILE"
 echo "========================================" >> "$OUTPUT_FILE"
 echo >> "$OUTPUT_FILE"
+
+# ==============================
+# AI ANALYSIS FUNCTIONS
+# ==============================
+
+# Call OpenAI API to analyze text
+call_openai_api() {
+    local prompt="$1"
+    local response
+    
+    # Make API call to OpenAI
+    response=$(curl -s -X POST "http://sushi.it.ilstu.edu:8080/" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $AI_API_KEY" \
+        -d "{
+            \"model\": \"$AI_MODEL\",
+            \"messages\": [{
+                \"role\": \"user\",
+                \"content\": \"$prompt\"
+            }]
+        }")
+    
+    # Extract the response text (safely handling JSON)
+    echo "$response" | grep -o '"content":"[^"]*' | head -1 | cut -d'"' -f4
+}
+
+# Safely escape text for JSON
+escape_json() {
+    local text="$1"
+    # Escape special JSON characters
+    text="${text//\\/\\\\}"
+    text="${text//\"/\\\"}"
+    text="${text//$'\n'/\\n}"
+    echo "$text"
+}
 
 # ==============================
 # HOST INFORMATION
@@ -50,6 +98,18 @@ if [[ -f "$RAW_DIR/auth.log.txt" ]]; then
     # Flag suspicious failed logins if above threshold
     if (( FAILED > 5 )); then
         echo "Suspicious activity detected: high number of failed logins." >> "$OUTPUT_FILE"
+        
+        # Use AI to analyze auth logs
+        if [[ -n "$OPENAI_API_KEY" ]]; then
+            local auth_sample
+            auth_sample=$(head -n 20 "$RAW_DIR/auth.log.txt" | escape_json)
+            local ai_analysis
+            ai_analysis=$(call_openai_api "Analyze these authentication log entries for suspicious patterns. Be concise:\n\n$auth_sample")
+            
+            if [[ -n "$ai_analysis" ]]; then
+                echo "AI Analysis: $ai_analysis" >> "$OUTPUT_FILE"
+            fi
+        fi
     fi
 
 # Same logic if secure.log exists instead
@@ -73,6 +133,20 @@ if [[ -f "$RAW_DIR/listening_ports.txt" ]]; then
     echo >> "$OUTPUT_FILE"
     echo "Top listening ports:" >> "$OUTPUT_FILE"
     head -n 10 "$RAW_DIR/listening_ports.txt" >> "$OUTPUT_FILE"
+    
+    # Use AI to identify suspicious ports
+    if [[ -n "$AI_API_KEY" ]]; then
+        local ports_sample
+        ports_sample=$(head -n 10 "$RAW_DIR/listening_ports.txt" | escape_json)
+        local port_analysis
+        port_analysis=$(call_openai_api "Review these listening ports and flag any that seem unusual or suspicious:\n\n$ports_sample")
+        
+        if [[ -n "$port_analysis" ]]; then
+            echo >> "$OUTPUT_FILE"
+            echo "AI Security Assessment:" >> "$OUTPUT_FILE"
+            echo "$port_analysis" >> "$OUTPUT_FILE"
+        fi
+    fi
 fi
 
 echo >> "$OUTPUT_FILE"
@@ -107,6 +181,20 @@ echo "---- Process Snapshot ----" >> "$OUTPUT_FILE"
 if [[ -f "$RAW_DIR/ps_aux.txt" ]]; then
     echo "Top running processes:" >> "$OUTPUT_FILE"
     head -n 10 "$RAW_DIR/ps_aux.txt" >> "$OUTPUT_FILE"
+    
+    # Use AI to identify suspicious processes
+    if [[ -n "$OPENAI_API_KEY" ]]; then
+        local process_sample
+        process_sample=$(head -n 10 "$RAW_DIR/ps_aux.txt" | escape_json)
+        local process_analysis
+        process_analysis=$(call_openai_api "Review these running processes and flag any that appear suspicious or unusual:\n\n$process_sample")
+        
+        if [[ -n "$process_analysis" ]]; then
+            echo >> "$OUTPUT_FILE"
+            echo "AI Process Analysis:" >> "$OUTPUT_FILE"
+            echo "$process_analysis" >> "$OUTPUT_FILE"
+        fi
+    fi
 fi
 
 echo >> "$OUTPUT_FILE"
