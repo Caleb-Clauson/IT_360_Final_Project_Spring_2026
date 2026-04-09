@@ -100,7 +100,7 @@ if [[ -f "$RAW_DIR/auth.log.txt" ]]; then
         echo "Suspicious activity detected: high number of failed logins." >> "$OUTPUT_FILE"
         
         # Use AI to analyze auth logs
-        if [[ -n "$OPENAI_API_KEY" ]]; then
+        if [[ -n "$AI_API_KEY" ]]; then
             local auth_sample
             auth_sample=$(head -n 20 "$RAW_DIR/auth.log.txt" | escape_json)
             local ai_analysis

@@ -78,13 +78,13 @@ cat .gitignore | grep "\.env"
 ```bash
 # forensicollect.sh does this automatically:
 source .env
-export OPENAI_API_KEY
+export AI_API_KEY
 ```
 
 ### 2. AI Script Validates Credentials
 ```bash
 # ai_explainer.sh checks:
-if [[ -z "${API_KEY:-}" ]]; then
+if [[ -z "${AI_API_KEY:-}" ]]; then
     echo "ERROR: API key not set"
     exit 1
 fi
@@ -93,7 +93,7 @@ fi
 ### 3. API Calls Use Variables
 ```bash
 # Never exposes the actual key in logs/output
-curl -H "Authorization: Bearer $API_KEY" ...
+curl -H "Authorization: Bearer $AI_API_KEY" ...
 ```
 
 ---
@@ -119,7 +119,7 @@ Output is saved to: `output/case_YYYY-MM-DD_HHMMSS/report/ai_summary.txt`
 
 ### "OPENAI_API_KEY not set"
 - Ensure `.env` file exists in the project root
-- Verify the file contains `API_KEY=sk-...`
+- Verify the file contains `AI_API_KEY=sk-...`
 - Check file permissions: `ls -la .env`
 
 ### API Errors

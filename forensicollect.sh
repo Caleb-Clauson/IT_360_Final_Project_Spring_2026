@@ -15,7 +15,7 @@ if [[ -f "$ENV_FILE" ]]; then
 fi
 
 # Export API keys for child processes
-export API_KEY="${API_KEY:-}"
+export AI_API_KEY="${AI_API_KEY:-}"
 export AI_MODEL="${AI_MODEL:-}"
 
 # ==============================
