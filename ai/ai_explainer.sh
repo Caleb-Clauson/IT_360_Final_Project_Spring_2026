@@ -101,9 +101,9 @@ if [[ -f "$RAW_DIR/auth.log.txt" ]]; then
             
             # Use AI to analyze auth logs
             if [[ -n "$AI_API_KEY" ]]; then
-                local auth_sample
+                auth_sample
                 auth_sample=$(head -n 20 "$RAW_DIR/auth.log.txt" | escape_json)
-                local ai_analysis
+                ai_analysis
                 ai_analysis=$(call_api "Analyze these authentication log entries for suspicious patterns. Be concise:\n\n$auth_sample")
                 
                 if [[ -n "$ai_analysis" ]]; then
@@ -134,9 +134,9 @@ if [[ -f "$RAW_DIR/listening_ports.txt" ]]; then
     
     # Use AI to identify suspicious ports
     if [[ -n "$AI_API_KEY" ]]; then
-        local ports_sample
+        ports_sample
         ports_sample=$(head -n 10 "$RAW_DIR/listening_ports.txt" | escape_json)
-        local port_analysis
+        port_analysis
         port_analysis=$(call_api "Review these listening ports and flag any that seem unusual or suspicious:\n\n$ports_sample")
         
         if [[ -n "$port_analysis" ]]; then
@@ -181,10 +181,10 @@ if [[ -f "$RAW_DIR/ps_aux.txt" ]]; then
     head -n 10 "$RAW_DIR/ps_aux.txt" >> "$OUTPUT_FILE"
     
     # Use AI to identify suspicious processes
-    if [[ -n "$OPENAI_API_KEY" ]]; then
-        local process_sample
+    if [[ -n "$AI_API_KEY" ]]; then
+        process_sample
         process_sample=$(head -n 10 "$RAW_DIR/ps_aux.txt" | escape_json)
-        local process_analysis
+        process_analysis
         process_analysis=$(call_api "Review these running processes and flag any that appear suspicious or unusual:\n\n$process_sample")
         
         if [[ -n "$process_analysis" ]]; then
