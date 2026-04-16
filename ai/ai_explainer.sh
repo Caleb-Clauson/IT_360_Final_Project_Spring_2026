@@ -38,7 +38,7 @@ echo >> "$OUTPUT_FILE"
 
 # Call AI API to analyze text
 call_api() {
-    local prompt="$1"
+    local prompt="Analyze the following:"
     local response
     
     # Make API call

@@ -17,6 +17,7 @@ fi
 # Export API keys for child processes
 export AI_API_KEY="${AI_API_KEY:-}"
 export AI_MODEL="${AI_MODEL:-}"
+export prompt="${prompt:-}"
 
 # ==============================
 # TOOL CONFIGURATION
@@ -312,6 +313,8 @@ main() {
     write_report_json
     generate_hash_manifest
     package_case
+
+    echo "Prompt: $prompt"
 
     log "Collection complete"
 }
