@@ -36,12 +36,12 @@ echo >> "$OUTPUT_FILE"
 # AI ANALYSIS FUNCTIONS
 # ==============================
 
-# Call OpenAI API to analyze text
-call_openai_api() {
+# Call AI API to analyze text
+call_api() {
     local prompt="$1"
     local response
     
-    # Make API call to OpenAI
+    # Make API call
     response=$(curl -s -X POST "http://sushi.it.ilstu.edu:8080/" \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $AI_API_KEY" \
@@ -96,23 +96,21 @@ if [[ -f "$RAW_DIR/auth.log.txt" ]]; then
     echo "Failed login attempts detected: $FAILED" >> "$OUTPUT_FILE"
 
     # Flag suspicious failed logins if above threshold
-    if (( FAILED > 5 )); then
-        echo "Suspicious activity detected: high number of failed logins." >> "$OUTPUT_FILE"
-        
-        # Use AI to analyze auth logs
-        if [[ -n "$AI_API_KEY" ]]; then
-            local auth_sample
-            auth_sample=$(head -n 20 "$RAW_DIR/auth.log.txt" | escape_json)
-            local ai_analysis
-            ai_analysis=$(call_openai_api "Analyze these authentication log entries for suspicious patterns. Be concise:\n\n$auth_sample")
+        if (( FAILED > 5 )); then
+            echo "Suspicious activity detected: high number of failed logins." >> "$OUTPUT_FILE"
             
-            if [[ -n "$ai_analysis" ]]; then
-                echo "AI Analysis: $ai_analysis" >> "$OUTPUT_FILE"
+            # Use AI to analyze auth logs
+            if [[ -n "$AI_API_KEY" ]]; then
+                local auth_sample
+                auth_sample=$(head -n 20 "$RAW_DIR/auth.log.txt" | escape_json)
+                local ai_analysis
+                ai_analysis=$(call_api "Analyze these authentication log entries for suspicious patterns. Be concise:\n\n$auth_sample")
+                
+                if [[ -n "$ai_analysis" ]]; then
+                    echo "AI Analysis: $ai_analysis" >> "$OUTPUT_FILE"
+                fi
             fi
-        fi
-    fi
-
-# Same logic if secure.log exists instead
+        fi# Same logic if secure.log exists instead
 elif [[ -f "$RAW_DIR/secure.log.txt" ]]; then
     FAILED=$(grep -i "failed" "$RAW_DIR/secure.log.txt" | wc -l)
     echo "Failed login attempts detected: $FAILED" >> "$OUTPUT_FILE"
@@ -139,7 +137,7 @@ if [[ -f "$RAW_DIR/listening_ports.txt" ]]; then
         local ports_sample
         ports_sample=$(head -n 10 "$RAW_DIR/listening_ports.txt" | escape_json)
         local port_analysis
-        port_analysis=$(call_openai_api "Review these listening ports and flag any that seem unusual or suspicious:\n\n$ports_sample")
+        port_analysis=$(call_api "Review these listening ports and flag any that seem unusual or suspicious:\n\n$ports_sample")
         
         if [[ -n "$port_analysis" ]]; then
             echo >> "$OUTPUT_FILE"
@@ -187,7 +185,7 @@ if [[ -f "$RAW_DIR/ps_aux.txt" ]]; then
         local process_sample
         process_sample=$(head -n 10 "$RAW_DIR/ps_aux.txt" | escape_json)
         local process_analysis
-        process_analysis=$(call_openai_api "Review these running processes and flag any that appear suspicious or unusual:\n\n$process_sample")
+        process_analysis=$(call_api "Review these running processes and flag any that appear suspicious or unusual:\n\n$process_sample")
         
         if [[ -n "$process_analysis" ]]; then
             echo >> "$OUTPUT_FILE"
