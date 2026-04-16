@@ -200,16 +200,21 @@ run_module() {
 # ==============================
 
 run_ai_explainer() {
-    # Check if AI script exists
-    [[ ! -f "$AI_SCRIPT" ]] && warn "AI script missing" && return
-
-    # Check executable
-    [[ ! -x "$AI_SCRIPT" ]] && warn "AI script not executable" && return
+    [[ ! -f "$AI_SCRIPT" ]] && warn "AI script missing" && return 1
+    [[ ! -x "$AI_SCRIPT" ]] && warn "AI script not executable" && return 1
 
     log "Running AI analysis..."
 
-    RAW_DIR="$RAW_DIR" REPORT_DIR="$REPORT_DIR" \
-    "$AI_SCRIPT" >> "$COLLECTION_LOG" 2>&1
+    if RAW_DIR="$RAW_DIR" REPORT_DIR="$REPORT_DIR" \
+       WARNINGS_FILE="$WARNINGS_FILE" COLLECTION_LOG="$COLLECTION_LOG" \
+       AI_API_KEY="${AI_API_KEY:-}" AI_MODEL="${AI_MODEL:-}" \
+       "$AI_SCRIPT" >> "$COLLECTION_LOG" 2>&1
+    then
+        log "AI analysis completed"
+    else
+        warn "AI analysis failed"
+        return 1
+    fi
 }
 
 # ==============================
