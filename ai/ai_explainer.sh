@@ -2,21 +2,22 @@
 
 set -u
 
-# Make sure required environment variables/paths exist
+# Validate inputs
 if [[ -z "${RAW_DIR:-}" || -z "${REPORT_DIR:-}" ]]; then
     echo "ERROR: RAW_DIR or REPORT_DIR not set." >&2
     exit 1
 fi
 
 if [[ -z "${AI_API_KEY:-}" ]]; then
-    echo "ERROR: AI_API_KEY not set. Please configure .env file." >&2
+    echo "ERROR: AI_API_KEY not set." >&2
     exit 1
 fi
 
-AI_MODEL="${AI_MODEL:-}"
+AI_MODEL="${AI_MODEL:-test}"
 
 OUTPUT_FILE="$REPORT_DIR/ai_summary.txt"
 
+# Start report
 {
     echo "Generating AI-style summary..."
     echo
@@ -31,13 +32,11 @@ escape_json() {
     text="${text//\\/\\\\}"
     text="${text//\"/\\\"}"
     text="${text//$'\n'/\\n}"
-    text="${text//$'\r'/}"
     echo "$text"
 }
 
 call_api() {
     local prompt="$1"
-    local response
 
     response=$(curl -s -X POST "http://sushi.it.ilstu.edu:8080/" \
         -H "Content-Type: application/json" \
@@ -54,40 +53,17 @@ call_api() {
 }
 
 # Host info
-if [[ -f "$RAW_DIR/hostname.txt" ]]; then
-    echo "Host: $(head -n 1 "$RAW_DIR/hostname.txt")" >> "$OUTPUT_FILE"
-fi
-
-if [[ -f "$RAW_DIR/os-release.txt" ]]; then
-    OS=$(grep PRETTY_NAME "$RAW_DIR/os-release.txt" | cut -d= -f2- | tr -d '"')
-    echo "Operating System: $OS" >> "$OUTPUT_FILE"
-fi
+[[ -f "$RAW_DIR/hostname.txt" ]] && echo "Host: $(head -n 1 "$RAW_DIR/hostname.txt")" >> "$OUTPUT_FILE"
+[[ -f "$RAW_DIR/os-release.txt" ]] && echo "Operating System: $(grep PRETTY_NAME "$RAW_DIR/os-release.txt" | cut -d= -f2- | tr -d '"')" >> "$OUTPUT_FILE"
 
 echo >> "$OUTPUT_FILE"
 
-# Authentication
+# Auth section
 echo "---- Authentication Activity ----" >> "$OUTPUT_FILE"
 
 if [[ -f "$RAW_DIR/auth.log.txt" ]]; then
     FAILED=$(grep -i "failed" "$RAW_DIR/auth.log.txt" | wc -l)
     echo "Failed login attempts detected: $FAILED" >> "$OUTPUT_FILE"
-
-    if (( FAILED > 5 )); then
-        echo "Suspicious activity detected: high number of failed logins." >> "$OUTPUT_FILE"
-
-        auth_sample=$(head -n 20 "$RAW_DIR/auth.log.txt")
-        auth_sample=$(escape_json "$auth_sample")
-        ai_analysis=$(call_api "Analyze these authentication log entries for suspicious patterns. Be concise:\n\n$auth_sample")
-
-        if [[ -n "$ai_analysis" ]]; then
-            echo "AI Analysis: $ai_analysis" >> "$OUTPUT_FILE"
-        fi
-    fi
-elif [[ -f "$RAW_DIR/secure.log.txt" ]]; then
-    FAILED=$(grep -i "failed" "$RAW_DIR/secure.log.txt" | wc -l)
-    echo "Failed login attempts detected: $FAILED" >> "$OUTPUT_FILE"
-else
-    echo "No authentication log data available." >> "$OUTPUT_FILE"
 fi
 
 echo >> "$OUTPUT_FILE"
@@ -96,43 +72,12 @@ echo >> "$OUTPUT_FILE"
 echo "---- Network Activity ----" >> "$OUTPUT_FILE"
 
 if [[ -f "$RAW_DIR/listening_ports.txt" ]]; then
-    PORT_COUNT=$(grep -E "LISTEN|tcp|udp" "$RAW_DIR/listening_ports.txt" | wc -l)
-    echo "Listening ports detected: $PORT_COUNT" >> "$OUTPUT_FILE"
-    echo >> "$OUTPUT_FILE"
-    echo "Top listening ports:" >> "$OUTPUT_FILE"
     head -n 10 "$RAW_DIR/listening_ports.txt" >> "$OUTPUT_FILE"
-
-    ports_sample=$(head -n 10 "$RAW_DIR/listening_ports.txt")
-    ports_sample=$(escape_json "$ports_sample")
-    port_analysis=$(call_api "Review these listening ports and flag any that seem unusual or suspicious:\n\n$ports_sample")
-
-    if [[ -n "$port_analysis" ]]; then
-        echo >> "$OUTPUT_FILE"
-        echo "AI Security Assessment:" >> "$OUTPUT_FILE"
-        echo "$port_analysis" >> "$OUTPUT_FILE"
-    fi
-else
-    echo "No listening port data available." >> "$OUTPUT_FILE"
 fi
 
 echo >> "$OUTPUT_FILE"
 
-# Recent changes
-echo "---- Recent System Changes ----" >> "$OUTPUT_FILE"
-
-if [[ -f "$RAW_DIR/etc_recent_changes.txt" ]]; then
-    echo "Recent changes in /etc:" >> "$OUTPUT_FILE"
-    head -n 5 "$RAW_DIR/etc_recent_changes.txt" >> "$OUTPUT_FILE"
-fi
-
-if [[ -f "$RAW_DIR/varlog_recent_changes.txt" ]]; then
-    echo "Recent changes in /var/log:" >> "$OUTPUT_FILE"
-    head -n 5 "$RAW_DIR/varlog_recent_changes.txt" >> "$OUTPUT_FILE"
-fi
-
-echo >> "$OUTPUT_FILE"
-
-# PROCESS SNAPSHOT
+# Process Snapshot
 echo "---- Process Snapshot ----" >> "$OUTPUT_FILE"
 
 # Show the top few lines of the collected process list
