@@ -48,7 +48,7 @@ nano .env  # or use your preferred editor
 ### 3. Update `.env` with Your Key
 
 ```bash
-API_KEY=sk-your-actual-api-key-here
+AI_API_KEY=sk-your-actual-api-key-here
 AI_MODEL=-
 ```
 
