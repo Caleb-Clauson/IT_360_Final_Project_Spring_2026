@@ -37,6 +37,7 @@ escape_json() {
 
 call_api() {
     local prompt="$1"
+    local response
 
     response=$(curl -s -X POST "http://sushi.it.ilstu.edu:8080/" \
         -H "Content-Type: application/json" \
