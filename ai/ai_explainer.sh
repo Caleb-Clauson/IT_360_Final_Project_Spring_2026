@@ -132,24 +132,25 @@ fi
 
 echo >> "$OUTPUT_FILE"
 
-# Process snapshot
+# PROCESS SNAPSHOT
 echo "---- Process Snapshot ----" >> "$OUTPUT_FILE"
 
+# Show the top few lines of the collected process list
 if [[ -f "$RAW_DIR/ps_aux.txt" ]]; then
     echo "Top running processes:" >> "$OUTPUT_FILE"
     head -n 10 "$RAW_DIR/ps_aux.txt" >> "$OUTPUT_FILE"
 
-    process_sample=$(head -n 10 "$RAW_DIR/ps_aux.txt")
-    process_sample=$(escape_json "$process_sample")
-    process_analysis=$(call_api "Review these running processes and flag any that appear suspicious or unusual:\n\n$process_sample")
+    # Use AI to identify suspicious processes
+    if [[ -n "$AI_API_KEY" ]]; then
+        process_sample=$(head -n 10 "$RAW_DIR/ps_aux.txt" | escape_json)
+        process_analysis=$(call_api "Review these running processes and flag any that appear suspicious or unusual:\n\n$process_sample")
 
-    if [[ -n "$process_analysis" ]]; then
-        echo >> "$OUTPUT_FILE"
-        echo "AI Process Analysis:" >> "$OUTPUT_FILE"
-        echo "$process_analysis" >> "$OUTPUT_FILE"
+        if [[ -n "$process_analysis" ]]; then
+            echo >> "$OUTPUT_FILE"
+            echo "AI Process Analysis:" >> "$OUTPUT_FILE"
+            echo "$process_analysis" >> "$OUTPUT_FILE"
+        fi
     fi
-else
-    echo "No process snapshot data available." >> "$OUTPUT_FILE"
 fi
 
 echo >> "$OUTPUT_FILE"
