@@ -53,7 +53,7 @@ call_api() {
     local prompt="$1"
     local response
 
-    response=$(curl -s -X POST "http://sushi.it.ilstu.edu:8080/" \
+    response=$(curl -s -X POST "http://sushi.it.ilstu.edu:8080/v1/chat/completions" \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $AI_API_KEY" \
         -d "{
