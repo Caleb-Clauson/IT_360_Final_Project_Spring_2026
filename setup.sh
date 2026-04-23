@@ -16,7 +16,7 @@ fi
 # Export API keys for child processes
 export AI_API_KEY="${AI_API_KEY:-}"
 export AI_MODEL="${AI_MODEL:-}"
-export prompt="${prompt:-}"
+#export prompt="${prompt:-}"
 
 ForensiCollect="$SCRIPT_DIR/forensic_collect.sh"
 chmod +x "$ForensiCollect"
