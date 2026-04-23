@@ -19,10 +19,10 @@ export AI_API_KEY="${AI_API_KEY:-}"
 export AI_MODEL="${AI_MODEL:-}"
 #export prompt="${prompt:-}"
 
-ForensiCollect="$SCRIPT_DIR/forensic_collect.sh"
+ForensiCollect="$SCRIPT_DIR/forensicollect.sh"
 chmod +x "$ForensiCollect"
 
-ai_explainer="$SCRIPT_DIR/ai_explainer.sh"
+ai_explainer="$SCRIPT_DIR/ai/ai_explainer.sh"
 chmod +x "$ai_explainer"
 
 modules_dir="$SCRIPT_DIR/modules"
