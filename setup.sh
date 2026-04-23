@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
 # This script sets up the environment for ForensiCollect
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${0}")" && pwd)"
+
 set -u
 
 echo "Setting up environment for ForensiCollect..."
 
 # Load environment variables from .env file (if it exists)
-ENV_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.env"
+ENV_FILE="$SCRIPT_DIR/.env"
 if [[ -f "$ENV_FILE" ]]; then
     # shellcheck disable=SC1090
     source "$ENV_FILE"
