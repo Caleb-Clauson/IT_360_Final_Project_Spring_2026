@@ -20,6 +20,11 @@ if [[ -z "${AI_MODEL:-}" ]]; then
     exit 1
 fi
 
+if [[ -z "${prompt:-}" ]]; then
+    echo "ERROR: prompt not set. Please set the 'prompt' variable in your .env file or environment." >&2
+    exit 1
+fi
+
 OUTPUT_FILE="$REPORT_DIR/ai_summary.txt"
 DEBUG_FILE="$REPORT_DIR/ai_debug.txt"
 
@@ -52,6 +57,10 @@ escape_json() {
 call_api() {
     local prompt="$1"
     local response
+    local escaped_prompt
+
+    # Properly escape the prompt for JSON
+    escaped_prompt=$(escape_json "$prompt")
 
     response=$(curl -s -X POST "http://sushi.it.ilstu.edu:8080/v1/chat/completions" \
         -H "Content-Type: application/json" \
@@ -60,20 +69,30 @@ call_api() {
             \"model\": \"$AI_MODEL\",
             \"messages\": [{
                 \"role\": \"user\",
-                \"content\": \"$prompt\"
+                \"content\": \"$escaped_prompt\"
             }]
         }")
 
     # Save raw response for debugging
     {
+        echo "================ API REQUEST ================"
+        echo "Model: $AI_MODEL"
+        echo "Prompt length: ${#prompt}"
         echo "================ API RESPONSE ================"
         echo "$response"
         echo
     } >> "$DEBUG_FILE"
 
-    # If response is empty, return nothing
+    # If response is empty, return error
     if [[ -z "$response" ]]; then
-        echo ""
+        echo "ERROR: Empty response from API" >> "$DEBUG_FILE"
+        return 1
+    fi
+
+    # Check for API errors in response
+    if echo "$response" | grep -q "error"; then
+        echo "API Error detected:" >> "$DEBUG_FILE"
+        echo "$response" >> "$DEBUG_FILE"
         return 1
     fi
 

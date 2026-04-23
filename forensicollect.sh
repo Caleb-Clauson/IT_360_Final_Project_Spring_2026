@@ -8,7 +8,7 @@ set -u
 # ==============================
 
 # Load environment variables from .env file (if it exists)
-ENV_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.env"
+ENV_FILE="$(cd "$(dirname "${0}")" && pwd)/.env"
 if [[ -f "$ENV_FILE" ]]; then
     # shellcheck disable=SC1090
     source "$ENV_FILE"
@@ -34,7 +34,7 @@ RECENT_DAYS="${RECENT_DAYS:-2}"
 # ==============================
 
 # Get directory where this script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${0}")" && pwd)"
 
 # Define important directories
 MODULE_DIR="$SCRIPT_DIR/modules"     # Where modules live
@@ -209,6 +209,7 @@ run_ai_explainer() {
     if RAW_DIR="$RAW_DIR" REPORT_DIR="$REPORT_DIR" \
        WARNINGS_FILE="$WARNINGS_FILE" COLLECTION_LOG="$COLLECTION_LOG" \
        AI_API_KEY="${AI_API_KEY:-}" AI_MODEL="${AI_MODEL:-}" \
+       prompt="${prompt:-}" \
        "$AI_SCRIPT" >> "$COLLECTION_LOG" 2>&1
     then
         log "AI analysis completed"
