@@ -3,7 +3,6 @@ output/
 *.sha256
 
 # Credentials and environment variables (NEVER commit)
-.env
 .env.local
 *.key
 *.pem
