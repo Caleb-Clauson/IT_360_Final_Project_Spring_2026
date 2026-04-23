@@ -42,9 +42,6 @@ project/
 ### 2. Create Your Local `.env` File
 
 ```bash
-# Copy the example file
-cp .env.example .env
-
 # Edit .env with your API key
 nano .env  # or use your preferred editor
 ```
@@ -55,14 +52,6 @@ nano .env  # or use your preferred editor
 AI_API_KEY=sk-your-actual-api-key-here
 AI_MODEL=-
 ```
-
-### 4. Verify `.env` is Ignored
-
-```bash
-cat .gitignore | grep "\.env"
-# Should show: .env
-```
-
 ---
 
 ## Configuration Options
@@ -71,7 +60,7 @@ cat .gitignore | grep "\.env"
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `API_KEY` | (required) | Your OpenAI API key |
+| `API_KEY` | (required) | Your API key |
 | `AI_MODEL` | (required) | Model to use |
 
 ---
@@ -121,7 +110,7 @@ Output is saved to: `output/case_YYYY-MM-DD_HHMMSS/report/ai_summary.txt`
 
 ## Troubleshooting
 
-### "OPENAI_API_KEY not set"
+### "AI_API_KEY not set"
 - Ensure `.env` file exists in the project root
 - Verify the file contains `AI_API_KEY=sk-...`
 - Check file permissions: `ls -la .env`
@@ -138,9 +127,8 @@ Output is saved to: `output/case_YYYY-MM-DD_HHMMSS/report/ai_summary.txt`
 
 ## Safety Checklist
 
-- ✅ `.env` is in `.gitignore`
-- ✅ Never commit `.env` to git
-- ✅ `.env.example` shows template (safe to commit)
+- ✅ Never commit the local updated `.env` to git
+- ✅ `.env` shows template (safe to commit)
 - ✅ API key loaded at runtime, not in source
 - ✅ No logging of actual API keys
 - ✅ Each environment has own credentials
@@ -161,4 +149,4 @@ If you suspect your API key is compromised:
 
 ## Questions?
 
-See `.env.example` for all available options, or check the main script and AI script for implementation details.
+See `.env` for all available options, or check the main script and AI script for implementation details.
