@@ -1,7 +1,7 @@
 # AI Configuration Guide
 
 ## Overview
-ForensiCollect now integrates with OpenAI's API to provide intelligent forensic analysis. This guide explains how to set up and use the AI features securely.
+ForensiCollect now integrates with AI API keys to provide intelligent forensic analysis. This guide explains how to set up and use the AI features securely.
 
 ---
 
@@ -10,18 +10,22 @@ ForensiCollect now integrates with OpenAI's API to provide intelligent forensic 
 ### Why We Use Environment Variables
 - **Never hardcode secrets** in scripts or git repositories
 - Credentials are loaded at runtime from `.env` file
-- `.env` is in `.gitignore` and never committed
 - Each developer/deployment can have different credentials
 
 ### Directory Structure
 ```
 project/
-├── .env                 # Local credentials (NOT in git) ⚠️
-├── .env.example         # Template showing what's needed (IN git) ✓
-├── .gitignore          # Prevents .env from being committed
-├── forensicollect.sh   # Main script (loads .env)
 └── ai/
     └── ai_explainer.sh # AI analysis script
+└── docs/
+    └── 
+└── modules/
+    └──
+├── .env                 # Template showing what's needed. Once updated, this file will contain YOUR Local credentials!
+├── .gitignore          # Prevents .env from being committed
+├── forensicollect.sh   # Main script (loads .env)
+├── setup.sh   # Main script (loads .env)
+
 ```
 
 ---
