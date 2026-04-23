@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # This script sets up the environment for ForensiCollect
-
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 set -u
 
 echo "Setting up environment for ForensiCollect..."
