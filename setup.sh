@@ -25,11 +25,11 @@ chmod +x "$ForensiCollect"
 ai_explainer="$SCRIPT_DIR/ai/ai_explainer.sh"
 chmod +x "$ai_explainer"
 
-modules_dir="$SCRIPT_DIR/modules"
+modules_dir="$SCRIPT_DIR/modules/"
 if [[ -d "$modules_dir" ]]; then
     for module in "$modules_dir"/*; do
-        if [[ -x "$module" ]]; then
-            echo "Found executable module: $module"
+        if [[ -f "$module" ]]; then
+            echo "Found module: $module"
             chmod +x "$module"
         fi
     done
