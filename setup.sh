@@ -19,3 +19,17 @@ export AI_MODEL="${AI_MODEL:-}"
 export prompt="${prompt:-}"
 
 ForensiCollect="$SCRIPT_DIR/forensic_collect.sh"
+chmod +x "$ForensiCollect"
+
+ai_explainer="$SCRIPT_DIR/ai_explainer.sh"
+chmod +x "$ai_explainer"
+
+modules_dir="$SCRIPT_DIR/modules"
+if [[ -d "$modules_dir" ]]; then
+    for module in "$modules_dir"/*; do
+        if [[ -x "$module" ]]; then
+            echo "Found executable module: $module"
+            chmod +x "$module"
+        fi
+    done
+fi
