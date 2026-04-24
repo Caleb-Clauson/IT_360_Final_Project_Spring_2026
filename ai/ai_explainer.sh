@@ -64,7 +64,7 @@ call_api() {
     escaped_prompt=$(escape_json "$prompt")
 
     # Make API call and capture HTTP status code
-    response=$(curl -s -w "\n%{http_code}" -X POST "http://sushi.it.ilstu.edu:8080/v1/chat/completions" \
+    response=$(curl -s -w "\n%{http_code}" -X POST "http://sushi.it.ilstu.edu:8080" \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $AI_API_KEY" \
         -d "{
@@ -82,7 +82,7 @@ call_api() {
     # Save raw response for debugging
     {
         echo "================ API REQUEST ================"
-        echo "Endpoint: http://sushi.it.ilstu.edu:8080/v1/chat/completions"
+        echo "Endpoint: http://sushi.it.ilstu.edu:8080"
         echo "Method: POST"
         echo "Model: $AI_MODEL"
         echo "Prompt length: ${#prompt}"
