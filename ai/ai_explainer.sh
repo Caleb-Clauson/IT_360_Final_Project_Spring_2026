@@ -58,11 +58,13 @@ call_api() {
     local prompt="$1"
     local response
     local escaped_prompt
+    local http_code
 
     # Properly escape the prompt for JSON
     escaped_prompt=$(escape_json "$prompt")
 
-    response=$(curl -s -X POST "http://sushi.it.ilstu.edu:8080/v1/chat/completions" \
+    # Make API call and capture HTTP status code
+    response=$(curl -s -w "\n%{http_code}" -X POST "http://sushi.it.ilstu.edu:8080/v1/chat/completions" \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $AI_API_KEY" \
         -d "{
@@ -73,11 +75,18 @@ call_api() {
             }]
         }")
 
+    # Extract HTTP status code (last line)
+    http_code=$(echo "$response" | tail -n1)
+    response=$(echo "$response" | head -n-1)
+
     # Save raw response for debugging
     {
         echo "================ API REQUEST ================"
+        echo "Endpoint: http://sushi.it.ilstu.edu:8080/v1/chat/completions"
+        echo "Method: POST"
         echo "Model: $AI_MODEL"
         echo "Prompt length: ${#prompt}"
+        echo "HTTP Status: $http_code"
         echo "================ API RESPONSE ================"
         echo "$response"
         echo
@@ -85,7 +94,13 @@ call_api() {
 
     # If response is empty, return error
     if [[ -z "$response" ]]; then
-        echo "ERROR: Empty response from API" >> "$DEBUG_FILE"
+        echo "ERROR: Empty response from API (HTTP $http_code)" >> "$DEBUG_FILE"
+        return 1
+    fi
+
+    # Check for HTTP errors
+    if [[ "$http_code" != "200" ]]; then
+        echo "HTTP Error: $http_code" >> "$DEBUG_FILE"
         return 1
     fi
 
