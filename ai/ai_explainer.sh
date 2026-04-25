@@ -7,11 +7,6 @@ if [[ -z "${RAW_DIR:-}" || -z "${REPORT_DIR:-}" ]]; then
     exit 1
 fi
 
-if [[ -z "${CASE_DIR:-}" ]]; then
-    echo "ERROR: CASE_DIR not set." >&2
-    exit 1
-fi
-
 if [[ -z "${AI_API_KEY:-}" ]]; then
     echo "ERROR: AI_API_KEY not set." >&2
     exit 1
@@ -22,8 +17,8 @@ if [[ -z "${AI_MODEL:-}" ]]; then
     exit 1
 fi
 
-OUTPUT_FILE="$CASE_DIR/ai_summary.json"
-DEBUG_FILE="$CASE_DIR/ai_debug.json"
+OUTPUT_FILE="$REPORT_DIR/ai_summary.json"
+DEBUG_FILE="$REPORT_DIR/ai_debug.json"
 
 : > "$OUTPUT_FILE"
 : > "$DEBUG_FILE"
