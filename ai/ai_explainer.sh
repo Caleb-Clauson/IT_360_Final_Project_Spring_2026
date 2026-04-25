@@ -17,8 +17,8 @@ if [[ -z "${AI_MODEL:-}" ]]; then
     exit 1
 fi
 
-OUTPUT_FILE="$REPORT_DIR/ai_summary.txt"
-DEBUG_FILE="$REPORT_DIR/ai_debug.txt"
+OUTPUT_FILE="$REPORT_DIR/ai_summary.json"
+DEBUG_FILE="$REPORT_DIR/ai_debug.json"
 
 : > "$OUTPUT_FILE"
 : > "$DEBUG_FILE"
