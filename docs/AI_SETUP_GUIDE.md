@@ -29,9 +29,9 @@ project/
         └── system_info.sh
         └── user_activity.sh
 ├── forensicollect.sh   # Main script (loads .env)
+├── setup.sh   # Preliminary script that changes the .sh file permissions
 ├── .env                 # Template showing what's needed. Once updated, this file will contain YOUR Local credentials!
 ├── .gitignore          # Prevents .env from being committed
-├── setup.sh   # Main script (loads .env)
 
 ```
 
