@@ -59,21 +59,14 @@ call_api() {
     local response
     local escaped_prompt
     local http_code
+    local query_prompt
 
-    # Properly escape the prompt for JSON
-    escaped_prompt=$(escape_json "$prompt")
+    # URL encode the prompt for query string
+    query_prompt=$(echo -n "$prompt" | jq -sRr @uri)
 
-    # Make API call and capture HTTP status code
-    response=$(curl -s -w "\n%{http_code}" -X POST "http://sushi.it.ilstu.edu:8080" \
-        -H "Content-Type: application/json" \
-        -H "Authorization: Bearer $AI_API_KEY" \
-        -d "{
-            \"model\": \"$AI_MODEL\",
-            \"messages\": [{
-                \"role\": \"user\",
-                \"content\": \"$escaped_prompt\"
-            }]
-        }")
+    # Make API call with GET request and capture HTTP status code
+    response=$(curl -s -w "\n%{http_code}" -X GET "http://sushi.it.ilstu.edu:8080?prompt=$query_prompt&model=$AI_MODEL" \
+        -H "Authorization: Bearer $AI_API_KEY")
 
     # Extract HTTP status code (last line)
     http_code=$(echo "$response" | tail -n1)
@@ -83,7 +76,7 @@ call_api() {
     {
         echo "================ API REQUEST ================"
         echo "Endpoint: http://sushi.it.ilstu.edu:8080"
-        echo "Method: POST"
+        echo "Method: GET"
         echo "Model: $AI_MODEL"
         echo "Prompt length: ${#prompt}"
         echo "HTTP Status: $http_code"
@@ -111,8 +104,8 @@ call_api() {
         return 1
     fi
 
-    # Extract first content field
-    echo "$response" | grep -o '"content":"[^"]*' | head -1 | cut -d'"' -f4
+    # Return the response as-is (adjust parsing based on actual API response format)
+    echo "$response"
 }
 
 # HOST INFO
