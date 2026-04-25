@@ -100,7 +100,7 @@ AI_MODEL=llama3.2-vision:latest
 
 ### 3. Set Permissions
 chmod +x setup.sh
-chmod +x forensicollect.sh  
+chmod +x forensicollect.sh
 
 ---
 
@@ -112,7 +112,7 @@ sudo apt install netcat-openbsd -y
 
 ## ▶️ How to Run
 ./setup.sh
-./forensicollect.sh  
+./forensicollect.sh
 
 ---
 
