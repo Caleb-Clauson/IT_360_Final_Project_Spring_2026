@@ -7,6 +7,11 @@ if [[ -z "${RAW_DIR:-}" || -z "${REPORT_DIR:-}" ]]; then
     exit 1
 fi
 
+if [[ -z "${CASE_DIR:-}" ]]; then
+    echo "ERROR: CASE_DIR not set." >&2
+    exit 1
+fi
+
 if [[ -z "${AI_API_KEY:-}" ]]; then
     echo "ERROR: AI_API_KEY not set." >&2
     exit 1

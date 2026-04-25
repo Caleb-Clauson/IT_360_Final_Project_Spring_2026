@@ -247,7 +247,7 @@ run_ai_explainer() {
 
     log "Running AI analysis..."
 
-    if RAW_DIR="$RAW_DIR" REPORT_DIR="$REPORT_DIR" \
+    if CASE_DIR="$CASE_DIR" RAW_DIR="$RAW_DIR" REPORT_DIR="$REPORT_DIR" \
        WARNINGS_FILE="$WARNINGS_FILE" COLLECTION_LOG="$COLLECTION_LOG" \
        AI_API_KEY="${AI_API_KEY:-}" AI_MODEL="${AI_MODEL:-}" \
        "$AI_SCRIPT" >> "$COLLECTION_LOG" 2>&1
