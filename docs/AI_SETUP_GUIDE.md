@@ -15,15 +15,22 @@ ForensiCollect now integrates with AI API keys to provide intelligent forensic a
 ### Directory Structure
 ```
 project/
-└── ai/
-    └── ai_explainer.sh # AI analysis script
 └── docs/
-    └── 
-└── modules/
-    └──
+    └── AI_SETUP_GUIDE.md
+    └── ARCHITECTURE.md
+    └── TEST_PLAN.md
+└── src/
+    └── ai
+        └── ai_explainer.sh # AI analysis script
+    └── modules
+        └── network.sh
+        └── process_service.sh
+        └── recent_changes.sh
+        └── system_info.sh
+        └── user_activity.sh
+├── forensicollect.sh   # Main script (loads .env)
 ├── .env                 # Template showing what's needed. Once updated, this file will contain YOUR Local credentials!
 ├── .gitignore          # Prevents .env from being committed
-├── forensicollect.sh   # Main script (loads .env)
 ├── setup.sh   # Main script (loads .env)
 
 ```
