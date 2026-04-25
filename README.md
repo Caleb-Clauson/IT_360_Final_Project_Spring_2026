@@ -1,104 +1,188 @@
-# IT_360_Final_Project_Spring_2026
+# 🔐 ForensiCollect – Linux DFIR Triage Tool
 
-## Project Overview
-Our final project for IT 360 is to create a forensic collection tool, specifically a **Linux DFIR Triage and Mini Timeline Report Tool**.
+## 📌 Project Overview
+ForensiCollect is a Linux-based Digital Forensics and Incident Response (DFIR) triage tool designed to automate the collection and analysis of critical system artifacts.
+
+It enables cybersecurity analysts to quickly move from raw system data to actionable insights by combining automated evidence collection with AI-assisted reporting.
 
 ---
 
-## Team Members
+## 👥 Team
+Team Name: Securists  
 - Caleb Clauson  
 - Eric Anderson  
 
-## Team Name
-**Securists**
+---
+
+## 🎯 Purpose
+Digital forensic investigations are often time-consuming and require manually collecting and analyzing system data.
+
+ForensiCollect solves this by:
+- Automating artifact collection  
+- Structuring outputs for easy review  
+- Generating a concise security summary  
 
 ---
 
-## Project Idea
-**ForensiCollect** – A Linux-based DFIR (Digital Forensics and Incident Response) triage tool designed to collect, organize, and summarize key system artifacts for rapid analysis.
+## 🚀 Key Features
 
-### Key Features
-1. Linux-focused forensic triage  
-2. User-focused and easy to interpret  
-3. Implemented using Bash scripting  
-4. Structured outputs (JSON and CSV)  
-5. Modular and extensible design  
-
----
-
-## What the Tool Does
-
-### 1. Evidence Collection
-The tool collects key forensic artifacts from the system, including:
-- System information (OS, kernel, uptime, storage)
-- User activity (logins, sessions, authentication logs)
-- Process and service snapshots
-- Network configuration and listening ports
-- Recent file changes in critical directories (`/etc`, `/var/log`)
-- Higher-value Linux artifacts such as authentication activity and system changes
+### Evidence Collection
+Collects critical Linux forensic artifacts:
+- System info (OS, uptime, hostname)
+- Authentication logs (/var/log/auth.log)
+- Running processes (ps aux)
+- Network activity (ss -tulpen, ss -antp)
+- Listening ports
+- Recent file changes (/etc, /var/log)
+- User accounts (/etc/passwd)
+- Sudo activity
+- Cron jobs (persistence detection)
+- Kernel modules (lsmod)
+- Recently modified user files
 
 ---
 
-### 2. Integrity and Documentation
-To ensure forensic soundness, the tool:
-- Uses read-only commands for triage collection  
-- Creates a timestamped case directory  
-- Logs all executed commands in `collection_log.txt`  
-- Records warnings and errors in `warnings.txt`  
-- Generates a SHA-256 hash manifest (`hash_manifest.txt`)  
-- Hashes the final archive for verification  
+### AI Analysis
+- Converts raw logs into human-readable findings  
+- Identifies suspicious ports, authentication anomalies, and persistence techniques  
+
+Output file:
+report/ai_summary.txt
 
 ---
 
-### 3. Artificial Intelligence Explainer
-An optional AI component is used for **post-collection analysis only**:
-- Converts complex logs into readable summaries  
-- Improves investigator efficiency  
-- Does NOT modify or collect evidence  
+### Integrity & Logging
+- collection_log.txt (command audit trail)
+- warnings.txt (errors and missing data)
+- hash_manifest.txt (SHA-256 file hashes)
+- Timestamped case directory
 
 ---
 
-### 4. Output Packaging
-- Generates a structured case folder  
-- Compresses results into a `.tar.gz` archive  
-- Produces a hash of the archive for integrity validation  
+### Output Packaging
+Each run creates:
+output/case_<timestamp>/
+
+Contents:
+- raw/ → collected artifacts  
+- report/ → summaries and AI output  
+- timeline.csv → event timeline  
+- report.json → structured data  
+- summary.txt → overview  
+- hash_manifest.txt → integrity verification  
 
 ---
 
-## Tech Stack
-- **Bash scripting** for orchestration and automation  
-- **Standard Linux utilities** (`ps`, `ip`, `ss`, `find`, etc.)  
+## 🛠️ Tech Stack
+- Bash scripting  
+- Linux CLI tools (ps, ss, find, grep, lsmod)  
+- AI API (via curl)  
 
 ---
 
-## Output Structure
-Each run generates a case directory containing:
+## ⚙️ Setup Instructions
 
-- `raw/` → collected forensic artifacts  
-- `report/` → summaries and AI outputs  
-- `collection_log.txt` → command audit trail  
-- `warnings.txt` → errors and missing data  
-- `hash_manifest.txt` → SHA-256 file hashes  
-- `summary.txt` → human-readable overview  
-- `report.json` → structured summary  
-- `timeline.csv` → event timeline  
+### 1. Clone Repository
+git clone https://github.com/Caleb-Clauson/IT_360_Final_Project_Spring_2026.git  
+cd IT_360_Final_Project_Spring_2026/src  
 
 ---
 
-## How We Will Demonstrate It
-1. Run the tool on a Linux VM  
-2. Walk through the generated case folder  
-3. Highlight key findings such as:
-   - Failed login attempts  
-   - Suspicious listening ports  
-   - Recent changes in `/etc`  
-   - Newly created users  
+### 2. Create Environment File
+cp ../.env.example .env  
+nano .env  
+
+Add your API key:
+AI_API_KEY=your_real_key_here  
+AI_MODEL=llama3.2-vision:latest  
 
 ---
 
-## Project Timeline
-- **February 5, 2026**: Project Proposal Submission  
-- **Week of March 16**: Core collection features completed  
-- **Week of April 10**: Scripts complete and tested  
-- **Week of April 16**: Documentation and presentation prep  
-- **May 1**: Final project submission  
+### 3. Set Permissions
+chmod +x forensicollect.sh  
+chmod +x modules/*.sh  
+chmod +x ai/*.sh  
+
+---
+
+### 4. Install Dependencies
+sudo apt update  
+sudo apt install netcat-openbsd -y  
+
+---
+
+## ▶️ How to Run
+./forensicollect.sh  
+
+---
+
+## 🧪 Demo / Testing Scenario (Recommended)
+
+Simulate suspicious activity:
+
+sudo useradd demo_user  
+nc -l -p 4444 &  
+
+Run the tool:
+./forensicollect.sh  
+
+---
+
+## 📊 Viewing Results
+cd ../output  
+cd $(ls -dt case_* | head -1)  
+
+View AI report:
+cat report/ai_summary.txt  
+
+View logs:
+tail -n 40 collection_log.txt  
+
+---
+
+## 🧠 Example Findings
+The tool can detect:
+- Suspicious port 4444 (netcat listener)
+- Normal vs abnormal services
+- Authentication activity
+- Recent system changes
+
+---
+
+## 📁 Repository Structure
+/src  
+ ├── forensicollect.sh  
+ ├── setup.sh  
+ ├── modules/  
+ ├── ai/  
+
+/docs  
+ ├── AI_SETUP_GUIDE.md  
+ ├── ARCHITECTURE.md  
+ ├── TEST_PLAN.md  
+ ├── final_report.pdf  
+
+---
+
+## ⚠️ Security Note
+- .env is NOT stored in GitHub  
+- API keys must remain local  
+- .env.example is provided for setup  
+
+---
+
+## 📽️ Demo Video
+(Add your video link here)
+
+---
+
+## 📄 Final Report
+docs/final_report.pdf  
+
+---
+
+## 📌 Conclusion
+ForensiCollect demonstrates how automation and AI can enhance digital forensics by:
+- Reducing investigation time  
+- Improving clarity of findings  
+- Providing structured, repeatable analysis  
