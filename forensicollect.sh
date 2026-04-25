@@ -98,11 +98,9 @@ init_case_dir() {
     COLLECTION_LOG="$CASE_DIR/collection_log.txt"
     WARNINGS_FILE="$CASE_DIR/warnings.txt"
     HASH_MANIFEST="$CASE_DIR/hash_manifest.txt"
-    SUMMARY_FILE="$CASE_DIR/summary.txt"
-    REPORT_JSON="$CASE_DIR/report.json"
     TIMELINE_CSV="$CASE_DIR/timeline.csv"
 
-    touch "$COLLECTION_LOG" "$WARNINGS_FILE" "$HASH_MANIFEST" "$SUMMARY_FILE" "$REPORT_JSON" "$TIMELINE_CSV"
+    touch "$COLLECTION_LOG" "$WARNINGS_FILE" "$HASH_MANIFEST" "$TIMELINE_CSV"
 
     log "$TOOL_NAME v$VERSION started"
     log "Case directory: $CASE_DIR"
