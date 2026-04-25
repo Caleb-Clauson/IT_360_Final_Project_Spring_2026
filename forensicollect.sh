@@ -6,9 +6,10 @@ set -u
 # CREDENTIALS LOADING
 # ==============================
 
-ENV_FILE="$(cd "$(dirname "${0}")" && pwd)/.env"
+SCRIPT_DIR="$(cd "$(dirname "${0}")" && pwd)"
+ENV_FILE="$SCRIPT_DIR/.env"
+
 if [[ -f "$ENV_FILE" ]]; then
-    # shellcheck disable=SC1090
     source "$ENV_FILE"
 fi
 
@@ -23,18 +24,9 @@ TOOL_NAME="ForensiCollect"
 VERSION="1.0.0"
 RECENT_DAYS="${RECENT_DAYS:-2}"
 
-# ==============================
-# PATH SETUP
-# ==============================
-
-SCRIPT_DIR="$(cd "$(dirname "${0}")" && pwd)"
 MODULE_DIR="$SCRIPT_DIR/modules"
 AI_SCRIPT="$SCRIPT_DIR/ai/ai_explainer.sh"
 OUT_BASE="$SCRIPT_DIR/output"
-
-# ==============================
-# GLOBAL VARIABLES
-# ==============================
 
 CASE_DIR=""
 RAW_DIR=""
@@ -98,12 +90,17 @@ init_case_dir() {
     COLLECTION_LOG="$CASE_DIR/collection_log.txt"
     WARNINGS_FILE="$CASE_DIR/warnings.txt"
     HASH_MANIFEST="$CASE_DIR/hash_manifest.txt"
+    SUMMARY_FILE="$CASE_DIR/summary.txt"
+    REPORT_JSON="$CASE_DIR/report.json"
     TIMELINE_CSV="$CASE_DIR/timeline.csv"
 
-    touch "$COLLECTION_LOG" "$WARNINGS_FILE" "$HASH_MANIFEST" "$TIMELINE_CSV"
+    touch "$COLLECTION_LOG" "$WARNINGS_FILE" "$HASH_MANIFEST" "$SUMMARY_FILE" "$REPORT_JSON" "$TIMELINE_CSV" \
+        || die "Could not initialize output files"
 
     log "$TOOL_NAME v$VERSION started"
     log "Case directory: $CASE_DIR"
+    log "Raw directory: $RAW_DIR"
+    log "Report directory: $REPORT_DIR"
 }
 
 # ==============================
@@ -114,7 +111,7 @@ check_dependencies() {
     log "Checking dependencies..."
 
     local required=("bash" "date" "find" "sha256sum" "tar" "gzip")
-    local optional=("ip" "ss" "netstat" "ps" "systemctl" "last" "who" "lsblk" "df" "crontab" "lsmod" "dpkg" "env" "curl")
+    local optional=("ip" "ss" "netstat" "ps" "systemctl" "last" "who" "lsblk" "df" "top" "journalctl" "curl" "crontab" "lsmod" "dpkg" "env")
 
     for cmd in "${required[@]}"; do
         check_command "$cmd" || warn "Missing required command: $cmd"
@@ -129,9 +126,13 @@ check_disk_space() {
     log "Checking disk space..."
 
     local available_kb
-    available_kb=$(df "$OUT_BASE" | awk 'NR==2 {print $4}')
+    available_kb=$(df "$OUT_BASE" 2>/dev/null | awk 'NR==2 {print $4}')
 
-    (( available_kb < 102400 )) && warn "Low disk space"
+    if [[ -n "${available_kb:-}" ]]; then
+        (( available_kb < 102400 )) && warn "Low disk space: less than 100 MB available"
+    else
+        warn "Could not determine available disk space"
+    fi
 }
 
 # ==============================
@@ -151,18 +152,31 @@ run_module() {
     local module="$1"
     local path="$MODULE_DIR/$module"
 
-    [[ ! -f "$path" ]] && warn "Missing module: $module" && return
-    [[ ! -x "$path" ]] && warn "Not executable: $module" && return
+    if [[ ! -f "$path" ]]; then
+        warn "Missing module: $module"
+        echo "\"$(ts)\",\"module_missing\",\"$module\"" >> "$TIMELINE_CSV"
+        return 1
+    fi
+
+    if [[ ! -x "$path" ]]; then
+        warn "Not executable: $module"
+        echo "\"$(ts)\",\"module_not_executable\",\"$module\"" >> "$TIMELINE_CSV"
+        return 1
+    fi
 
     log "Running module: $module"
+    echo "\"$(ts)\",\"module_start\",\"$module\"" >> "$TIMELINE_CSV"
 
     if RAW_DIR="$RAW_DIR" REPORT_DIR="$REPORT_DIR" \
        WARNINGS_FILE="$WARNINGS_FILE" COLLECTION_LOG="$COLLECTION_LOG" \
        RECENT_DAYS="$RECENT_DAYS" "$path" >> "$COLLECTION_LOG" 2>&1
     then
         log "Completed module: $module"
+        echo "\"$(ts)\",\"module_complete\",\"$module\"" >> "$TIMELINE_CSV"
     else
         warn "Module failed: $module"
+        echo "\"$(ts)\",\"module_failed\",\"$module\"" >> "$TIMELINE_CSV"
+        return 1
     fi
 }
 
@@ -172,12 +186,15 @@ run_module() {
 
 collect_extended_artifacts() {
     log "Collecting extended forensic artifacts..."
+    echo "\"$(ts)\",\"extended_collection_start\",\"extended artifacts\"" >> "$TIMELINE_CSV"
 
     # Sudo / privilege escalation activity
     if [[ -f /var/log/auth.log ]]; then
         grep -i "sudo" /var/log/auth.log > "$RAW_DIR/sudo_activity.txt" 2>/dev/null || true
+    elif [[ -f /var/log/secure ]]; then
+        grep -i "sudo" /var/log/secure > "$RAW_DIR/sudo_activity.txt" 2>/dev/null || true
     else
-        echo "No /var/log/auth.log found" > "$RAW_DIR/sudo_activity.txt"
+        echo "No auth.log or secure log found" > "$RAW_DIR/sudo_activity.txt"
     fi
 
     # User accounts and privileged users
@@ -185,6 +202,8 @@ collect_extended_artifacts() {
         cat /etc/passwd > "$RAW_DIR/passwd_full.txt" 2>/dev/null || true
         awk -F: '($3 == 0 || $3 >= 1000) {print}' /etc/passwd > "$RAW_DIR/important_users.txt" 2>/dev/null || true
         awk -F: '($3 == 0) {print}' /etc/passwd > "$RAW_DIR/uid0_users.txt" 2>/dev/null || true
+    else
+        echo "No /etc/passwd found" > "$RAW_DIR/passwd_full.txt"
     fi
 
     # Cron jobs / persistence checks
@@ -235,6 +254,7 @@ collect_extended_artifacts() {
     fi
 
     log "Extended forensic artifact collection complete"
+    echo "\"$(ts)\",\"extended_collection_complete\",\"extended artifacts\"" >> "$TIMELINE_CSV"
 }
 
 # ==============================
@@ -242,19 +262,31 @@ collect_extended_artifacts() {
 # ==============================
 
 run_ai_explainer() {
-    [[ ! -f "$AI_SCRIPT" ]] && warn "AI script missing" && return 1
-    [[ ! -x "$AI_SCRIPT" ]] && warn "AI script not executable" && return 1
+    if [[ ! -f "$AI_SCRIPT" ]]; then
+        warn "AI script missing"
+        echo "\"$(ts)\",\"ai_missing\",\"ai_explainer.sh\"" >> "$TIMELINE_CSV"
+        return 1
+    fi
+
+    if [[ ! -x "$AI_SCRIPT" ]]; then
+        warn "AI script not executable"
+        echo "\"$(ts)\",\"ai_not_executable\",\"ai_explainer.sh\"" >> "$TIMELINE_CSV"
+        return 1
+    fi
 
     log "Running AI analysis..."
+    echo "\"$(ts)\",\"ai_start\",\"ai_explainer.sh\"" >> "$TIMELINE_CSV"
 
-    if CASE_DIR="$CASE_DIR" RAW_DIR="$RAW_DIR" REPORT_DIR="$REPORT_DIR" \
+    if RAW_DIR="$RAW_DIR" REPORT_DIR="$REPORT_DIR" \
        WARNINGS_FILE="$WARNINGS_FILE" COLLECTION_LOG="$COLLECTION_LOG" \
        AI_API_KEY="${AI_API_KEY:-}" AI_MODEL="${AI_MODEL:-}" \
        "$AI_SCRIPT" >> "$COLLECTION_LOG" 2>&1
     then
         log "AI analysis completed"
+        echo "\"$(ts)\",\"ai_complete\",\"ai_explainer.sh\"" >> "$TIMELINE_CSV"
     else
         warn "AI analysis failed"
+        echo "\"$(ts)\",\"ai_failed\",\"ai_explainer.sh\"" >> "$TIMELINE_CSV"
         return 1
     fi
 }
@@ -267,19 +299,38 @@ write_summary() {
     log "Writing summary..."
 
     local warnings
-    warnings=$(wc -l < "$WARNINGS_FILE")
+    warnings=$(wc -l < "$WARNINGS_FILE" 2>/dev/null || echo "0")
+
+    local ai_file=""
+    if [[ -f "$REPORT_DIR/ai_summary.txt" ]]; then
+        ai_file="$REPORT_DIR/ai_summary.txt"
+    elif [[ -f "$REPORT_DIR/ai_summary.json" ]]; then
+        ai_file="$REPORT_DIR/ai_summary.json"
+    fi
 
     {
         echo "$TOOL_NAME Summary"
         echo "==========================="
         echo "Version: $VERSION"
         echo "Case: $CASE_DIR"
+        echo "Collection Time: $(ts)"
         echo "Warnings: $warnings"
         echo
 
         echo "Artifacts:"
-        echo "- raw/"
-        echo "- report/"
+        echo "- raw/ contains collected system evidence"
+        echo "- report/ contains AI and analysis outputs"
+        echo "- collection_log.txt contains the audit trail"
+        echo "- hash_manifest.txt contains SHA-256 hashes"
+        echo "- timeline.csv contains collection timeline events"
+        echo
+
+        echo "Core Modules:"
+        echo "- system_info.sh"
+        echo "- user_activity.sh"
+        echo "- process_service.sh"
+        echo "- network.sh"
+        echo "- recent_changes.sh"
         echo
 
         echo "Extended Artifacts Added:"
@@ -299,12 +350,31 @@ write_summary() {
         echo
 
         echo "AI Summary:"
-        [[ -f "$REPORT_DIR/ai_summary.txt" ]] && echo "Generated" || echo "Not generated"
+        if [[ -n "$ai_file" ]]; then
+            echo "Generated: $(basename "$ai_file")"
+            echo
+            echo "AI Summary Preview:"
+            echo "-------------------"
+            head -n 25 "$ai_file"
+        else
+            echo "Not generated"
+        fi
+        echo
+
+        echo "Warnings:"
+        if [[ -s "$WARNINGS_FILE" ]]; then
+            cat "$WARNINGS_FILE"
+        else
+            echo "None"
+        fi
     } > "$SUMMARY_FILE"
 }
 
 write_report_json() {
     log "Writing JSON report..."
+
+    local ai_generated="false"
+    [[ -f "$REPORT_DIR/ai_summary.txt" || -f "$REPORT_DIR/ai_summary.json" ]] && ai_generated="true"
 
     cat > "$REPORT_JSON" <<EOF
 {
@@ -312,7 +382,8 @@ write_report_json() {
   "version": "$VERSION",
   "case": "$(basename "$CASE_DIR")",
   "time": "$(ts)",
-  "extended_artifacts": true
+  "extended_artifacts": true,
+  "ai_summary_generated": $ai_generated
 }
 EOF
 }
@@ -325,9 +396,9 @@ generate_hash_manifest() {
     log "Hashing files..."
 
     (
-        cd "$CASE_DIR" || return
-        find . -type f ! -name "hash_manifest.txt" | xargs sha256sum > "$HASH_MANIFEST"
-    )
+        cd "$CASE_DIR" || return 1
+        find . -type f ! -name "hash_manifest.txt" -print0 | sort -z | xargs -0 sha256sum > "$HASH_MANIFEST"
+    ) || warn "Hash manifest generation failed"
 }
 
 # ==============================
@@ -343,11 +414,11 @@ package_case() {
     ARCHIVE_FILE="$OUT_BASE/$name.tar.gz"
 
     (
-        cd "$OUT_BASE" || return
+        cd "$OUT_BASE" || return 1
         tar -czf "$name.tar.gz" "$name"
-    )
+    ) || warn "Archive creation failed"
 
-    sha256sum "$ARCHIVE_FILE" > "$ARCHIVE_FILE.sha256"
+    sha256sum "$ARCHIVE_FILE" > "$ARCHIVE_FILE.sha256" 2>/dev/null || warn "Archive hash generation failed"
 }
 
 # ==============================
@@ -360,26 +431,25 @@ main() {
     check_disk_space
     init_timeline
 
-    # Run all standard modules
     run_module "system_info.sh"
     run_module "user_activity.sh"
     run_module "process_service.sh"
     run_module "network.sh"
     run_module "recent_changes.sh"
 
-    # Collect additional higher-value artifacts
     collect_extended_artifacts
 
-    # Run AI analysis
     run_ai_explainer
 
-    # Generate outputs
     write_summary
     write_report_json
     generate_hash_manifest
     package_case
 
+    echo "\"$(ts)\",\"complete\",\"collection finished\"" >> "$TIMELINE_CSV"
+
     log "Collection complete"
+    log "Output stored at: $CASE_DIR"
 }
 
 main "$@"
