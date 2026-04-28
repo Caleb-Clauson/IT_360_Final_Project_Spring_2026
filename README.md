@@ -110,17 +110,7 @@ sudo apt update
 
 ## ▶️ How to Run
 ./setup.sh
-./forensicollect.sh
-
----
-
-## 🧪 Demo / Testing Scenario (Recommended)
-Simulate suspicious activity:
-
-sudo useradd demo_user   
-
-Run the tool:
-./forensicollect.sh  
+./forensicollect.sh 
 
 ---
 
