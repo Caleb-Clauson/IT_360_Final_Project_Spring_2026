@@ -115,7 +115,6 @@ sudo apt update
 ---
 
 ## 🧪 Demo / Testing Scenario (Recommended)
-
 Simulate suspicious activity:
 
 sudo useradd demo_user   
@@ -147,18 +146,28 @@ The tool can detect:
 ---
 
 ## 📁 Repository Structure
-/src  
- ├── forensicollect.sh  
- ├── setup.sh  
- ├── modules/  
- ├── ai/  
-
 /docs  
  ├── AI_SETUP_GUIDE.md  
  ├── ARCHITECTURE.md  
  ├── TEST_PLAN.md  
- ├── final_report.pdf  
-
+ ├── final_report.pdf 
+/src  
+ ├── /ai
+  ├── ai_explainer.sh  
+ ├── /modules
+  ├── network.sh
+  ├── process_service.sh
+  ├── recent_changes.sh
+  ├── system_info.sh
+  ├── user_activity.sh
+ ├── forensicollect.sh  
+ ├── setup.sh
+ ├── .env.example
+ ├── .gitignore
+ ├── LICENSE
+ ├── ProjectRequirements.md
+ ├── README.md
+ 
 ---
 
 ## ⚠️ Security Note
