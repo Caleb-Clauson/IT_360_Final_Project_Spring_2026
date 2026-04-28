@@ -136,27 +136,7 @@ The tool can detect:
 ---
 
 ## 📁 Repository Structure
-/docs  
- ├── AI_SETUP_GUIDE.md  
- ├── ARCHITECTURE.md  
- ├── TEST_PLAN.md  
- ├── final_report.pdf 
-/src  
- ├── /ai
-  ├── ai_explainer.sh  
- ├── /modules
-  ├── network.sh
-  ├── process_service.sh
-  ├── recent_changes.sh
-  ├── system_info.sh
-  ├── user_activity.sh
- ├── forensicollect.sh  
- ├── setup.sh
- ├── .env.example
- ├── .gitignore
- ├── LICENSE
- ├── ProjectRequirements.md
- ├── README.md
+/docs ├── AI_SETUP_GUIDE.md ├── ARCHITECTURE.md ├── TEST_PLAN.md ├── IT 360 Final Project Report.pdf /src ├── ai/ │ └── ai_explainer.sh ├── modules/ │ ├── network.sh │ ├── process_service.sh │ ├── recent_changes.sh │ ├── system_info.sh │ └── user_activity.sh ├── forensicollect.sh ├── setup.sh .env.example .gitignore LICENSE ProjectRequirements.md README.md
  
 ---
 
