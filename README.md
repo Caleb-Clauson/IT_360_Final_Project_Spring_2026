@@ -105,8 +105,7 @@ chmod +x forensicollect.sh
 ---
 
 ### 4. Install Dependencies
-sudo apt update  
-sudo apt install netcat-openbsd -y  
+sudo apt update    
 
 ---
 
@@ -120,8 +119,7 @@ sudo apt install netcat-openbsd -y
 
 Simulate suspicious activity:
 
-sudo useradd demo_user  
-nc -l -p 4444 &  
+sudo useradd demo_user   
 
 Run the tool:
 ./forensicollect.sh  
