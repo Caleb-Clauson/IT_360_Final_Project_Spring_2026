@@ -136,6 +136,8 @@ The tool can detect:
 ---
 
 ## 📁 Repository Structure
+
+```
 IT_360_Final_Project_Spring_2026/
 │
 ├── docs/
@@ -163,6 +165,7 @@ IT_360_Final_Project_Spring_2026/
 ├── LICENSE
 ├── ProjectRequirements.md
 └── README.md
+```
  
 ---
 
