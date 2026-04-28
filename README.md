@@ -100,7 +100,6 @@ AI_MODEL=llama3.2-vision:latest
 
 ### 3. Set Permissions
 chmod +x setup.sh
-chmod +x forensicollect.sh
 
 ---
 
