@@ -184,7 +184,7 @@ Output is saved to: `output/case_YYYY-MM-DD_HHMMSS/report/ai_summary.json`
 **Symptoms:** API returns 429 status or quota error
 
 ### No AI Analysis in Output
-**Symptoms:** Tool completes but `report/ai_summary.txt` is empty or missing
+**Symptoms:** Tool completes but `report/ai_summary.json` is empty or missing
 
 **Solutions:**
 1. Check if AI analysis was skipped:
