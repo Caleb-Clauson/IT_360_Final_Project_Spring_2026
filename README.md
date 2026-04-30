@@ -73,7 +73,7 @@ Contents:
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 - Bash scripting  
 - Linux CLI tools (ps, ss, find, grep, lsmod)  
 - AI API (via curl)  
