@@ -14,27 +14,33 @@ ForensiCollect now integrates with AI API keys to provide intelligent forensic a
 
 ### Directory Structure
 ```
-project/
-└── docs/
-    └── AI_SETUP_GUIDE.md
-    └── ARCHITECTURE.md
-    └── TEST_PLAN.md
-└── src/
-    └── ai
-        └── ai_explainer.sh # AI analysis script
-    └── modules
-        └── network.sh
-        └── process_service.sh
-        └── recent_changes.sh
-        └── system_info.sh
-        └── user_activity.sh
-    ├── forensicollect.sh   # Main script (loads .env)
-    ├── setup.sh   # Preliminary script that changes the .sh file permissions
-├── .env.example        # Template showing what's needed. Once updated, this file will contain YOUR Local credentials!
-├── .gitignore          # Prevents .env from being committed
+IT_360_Final_Project_Spring_2026/
+│
+├── docs/
+│   ├── AI_SETUP_GUIDE.md
+│   ├── ARCHITECTURE.md
+│   ├── TEST_PLAN.md
+│   └── IT 360 Final Project Report.pdf
+│
+├── src/
+│   ├── ai/
+│   │   └── ai_explainer.sh
+│   │
+│   ├── modules/
+│   │   ├── network.sh
+│   │   ├── process_service.sh
+│   │   ├── recent_changes.sh
+│   │   ├── system_info.sh
+│   │   └── user_activity.sh
+│   │
+│   ├── forensicollect.sh
+│   └── setup.sh
+│
+├── .env.example
+├── .gitignore
+├── LICENSE
 ├── ProjectRequirements.md
-├── README.md
-
+└── README.md
 ```
 
 ---
