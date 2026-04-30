@@ -119,7 +119,7 @@ cd ../output
 cd $(ls -dt case_* | head -1)  
 
 View AI report:
-cat report/ai_summary.txt  
+cat report/ai_summary.json  
 
 View logs:
 tail -n 40 collection_log.txt  
