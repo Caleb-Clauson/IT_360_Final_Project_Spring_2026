@@ -58,6 +58,7 @@ IT_360_Final_Project_Spring_2026/
 
 ```bash
 # Edit .env with your API key
+cp ../.env.example .env
 nano .env  # or use your preferred editor
 ```
 
