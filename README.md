@@ -1,20 +1,20 @@
-# 🔐 ForensiCollect – Linux DFIR Triage Tool
+# ForensiCollect – Linux DFIR Triage Tool
 
-## 📌 Project Overview
+## Project Overview
 ForensiCollect is a Linux-based Digital Forensics and Incident Response (DFIR) triage tool designed to automate the collection and analysis of critical system artifacts.
 
 It enables cybersecurity analysts to quickly move from raw system data to actionable insights by combining automated evidence collection with AI-assisted reporting.
 
 ---
 
-## 👥 Team
+## Team
 Team Name: Securists  
 - Caleb Clauson  
 - Eric Anderson  
 
 ---
 
-## 🎯 Purpose
+## Purpose
 Digital forensic investigations are often time-consuming and require manually collecting and analyzing system data.
 
 ForensiCollect solves this by:
@@ -24,7 +24,7 @@ ForensiCollect solves this by:
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 ### Evidence Collection
 Collects critical Linux forensic artifacts:
@@ -80,7 +80,7 @@ Contents:
 
 ---
 
-## ⚙️ Setup Instructions
+## Setup Instructions
 
 ### 1. Clone Repository
 git clone https://github.com/Caleb-Clauson/IT_360_Final_Project_Spring_2026.git  
@@ -108,13 +108,13 @@ sudo apt update
 
 ---
 
-## ▶️ How to Run
+## How to Run
 ./setup.sh
 ./forensicollect.sh 
 
 ---
 
-## 📊 Viewing Results
+## Viewing Results
 cd ../output  
 cd $(ls -dt case_* | head -1)  
 
@@ -126,7 +126,7 @@ tail -n 40 collection_log.txt
 
 ---
 
-## 🧠 Example Findings
+## Example Findings
 The tool can detect:
 - Suspicious port 4444 (netcat listener)
 - Normal vs abnormal services
@@ -135,7 +135,7 @@ The tool can detect:
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 IT_360_Final_Project_Spring_2026/
@@ -169,24 +169,24 @@ IT_360_Final_Project_Spring_2026/
  
 ---
 
-## ⚠️ Security Note
+## Security Note
 - .env is NOT stored in GitHub  
 - API keys must remain local  
 - .env.example is provided for setup  
 
 ---
 
-## 📽️ Demo Video
+## Demo Video
 https://youtu.be/n3RgPxyQp1Y
 
 ---
 
-## 📄 Final Report
+## Final Report
 docs/final_report.pdf  
 
 ---
 
-## 📌 Conclusion
+## Conclusion
 ForensiCollect demonstrates how automation and AI can enhance digital forensics by:
 - Reducing investigation time  
 - Improving clarity of findings  
