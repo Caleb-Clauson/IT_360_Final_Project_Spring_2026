@@ -213,8 +213,8 @@ Output is saved to: `output/case_YYYY-MM-DD_HHMMSS/report/ai_summary.json`
 ## Error Handling During Collection
 
 ### What Happens if AI Fails?
-- **Raw data:** Still successfully collected ✅
-- **AI summary:** Skipped or shows error ❌
+- **Raw data:** Still successfully collected
+- **AI summary:** Skipped or shows error
 - **Exit code:** Still `0` (tool completes)
 - **Warnings:** Error logged in `warnings.txt`
 
@@ -237,36 +237,36 @@ AI_API_KEY=your_key /path/to/ai_explainer.sh < raw/user_activity.txt
 ## Security Best Practices
 
 ### When Setting Up
-- ✅ **Never share your API key** (it grants access to your account)
-- ✅ **Never hardcode keys** in scripts, config files, or environment setup
-- ✅ **Use `.env` file** (which is git-ignored automatically)
+- **Never share your API key** (it grants access to your account)
+- **Never hardcode keys** in scripts, config files, or environment setup
+- **Use `.env` file** (which is git-ignored automatically)
   ```
-- ✅ **Use strong API keys** (use the generated keys, don't create predictable ones)
+- **Use strong API keys** (use the generated keys, don't create predictable ones)
 
 ### When Using
-- ✅ **Don't copy `.env` to other machines** (each system should have its own key)
-- ✅ **Don't print API key** in logs or output
-- ✅ **Use API key only from trusted networks** (consider VPN if untrusted)
-- ✅ **Check `.gitignore`** includes `.env`:
+- **Don't copy `.env` to other machines** (each system should have its own key)
+- **Don't print API key** in logs or output
+- **Use API key only from trusted networks** (consider VPN if untrusted)
+- **Check `.gitignore`** includes `.env`:
   ```bash
   cat .gitignore | grep "\.env"
   ```
 
 ### Environment Variable Safety
-- ✅ API key loaded at startup, then cleared from shell history
-- ✅ Not visible in `ps aux` or `echo $AI_API_KEY` (if not exported)
-- ✅ Not written to system logs
-- ✅ Only sent over HTTPS to API server
+- API key loaded at startup, then cleared from shell history
+- Not visible in `ps aux` or `echo $AI_API_KEY` (if not exported)
+- Not written to system logs
+- Only sent over HTTPS to API server
 
 ---
 
 ## Safety Checklist
 
-- ✅ Never commit the local updated `.env` to git
-- ✅ `.env.example` shows template (safe to commit)
-- ✅ API key loaded at runtime, not in source code
-- ✅ No logging of actual API keys in output
-- ✅ Each environment has own credentials
+- Never commit the local updated `.env` to git
+- `.env.example` shows template (safe to commit)
+- API key loaded at runtime, not in source code
+- No logging of actual API keys in output
+- Each environment has own credentials
 
 ---
 
