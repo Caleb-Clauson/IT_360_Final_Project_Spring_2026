@@ -128,7 +128,7 @@ The AI analysis will run automatically and analyze:
 - Listening ports for unusual activity
 - Running processes for anomalies
 
-Output is saved to: `output/case_YYYY-MM-DD_HHMMSS/report/ai_summary.txt`
+Output is saved to: `output/case_YYYY-MM-DD_HHMMSS/report/ai_summary.json`
 
 ---
 
