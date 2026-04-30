@@ -177,7 +177,7 @@ IT_360_Final_Project_Spring_2026/
 ---
 
 ## 📽️ Demo Video
-(Add your video link here)
+https://youtu.be/n3RgPxyQp1Y
 
 ---
 
